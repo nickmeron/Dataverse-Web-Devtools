@@ -74,16 +74,16 @@ The official Plugin Registration Tool is a Windows-only desktop app that require
 ## Screenshots
 
 ### Registrations Tree
-![Registrations Tree](docs/screenshots/registrations-tree.png)
+![Registrations Tree](docs/screenshots/registrations-tree.png?v=2)
 
 ### Edit Step Dialog
-![Edit Step](docs/screenshots/edit-step.png)
+![Edit Step](docs/screenshots/edit-step.png?v=2)
 
 ### Service Endpoint Registration
-![Service Endpoint Form](docs/screenshots/service-endpoint-form.png)
+![Service Endpoint Form](docs/screenshots/service-endpoint-form.png?v=2)
 
 ### Trace Log Viewer & Monitoring Dashboard
-![Trace Logs](docs/screenshots/trace-logs.png)
+![Trace Logs](docs/screenshots/trace-logs.png?v=2)
 
 ## Getting Started
 
