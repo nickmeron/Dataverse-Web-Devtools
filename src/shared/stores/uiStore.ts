@@ -12,12 +12,16 @@ interface SelectedNode {
 
 /** All dialogs that can be opened from anywhere in the app */
 export type DialogType =
-  | { type: 'registerStep'; pluginTypeId?: string }
+  | { type: 'registerStep'; pluginTypeId?: string; eventHandlerId?: string; eventHandlerName?: string }
   | { type: 'editStep'; stepId: string; data: Record<string, unknown> }
   | { type: 'uploadAssembly' }
   | { type: 'updateAssembly'; assemblyId: string; assemblyName: string }
   | { type: 'registerImage'; stepId: string }
   | { type: 'editImage'; imageId: string; data: Record<string, unknown> }
+  | { type: 'registerWebhook' }
+  | { type: 'editWebhook'; endpointId: string; data: Record<string, unknown> }
+  | { type: 'registerServiceEndpoint' }
+  | { type: 'editServiceEndpoint'; endpointId: string; data: Record<string, unknown> }
   | { type: 'sessionDetails' }
   | {
       type: 'confirm';

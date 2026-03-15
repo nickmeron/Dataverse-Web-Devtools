@@ -93,13 +93,9 @@ export interface ServiceEndpoint {
   contract: number;
   url: string | null;
   authtype: number | null;
-  authvalue: string | null;
   messageformat: number;
   namespaceaddress: string | null;
   path: string | null;
-  saskeyname: string | null;
-  saskey: string | null;
-  sastoken: string | null;
   userclaim: number;
   connectionmode: number | null;
 }

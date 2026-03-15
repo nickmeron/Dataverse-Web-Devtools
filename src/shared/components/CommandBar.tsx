@@ -11,6 +11,8 @@ import {
   Image,
   ScrollText,
   Puzzle,
+  Globe,
+  Cloud,
 } from 'lucide-react';
 import { useUiStore, type TreeViewMode } from '@/shared/stores/uiStore';
 import { useAuthStore } from '@/shared/stores/authStore';
@@ -134,6 +136,30 @@ export function CommandBar() {
                 >
                   <Package className="h-4 w-4 text-surface-400" />
                   New Assembly
+                </button>
+                <div className="mx-2 my-1 border-t border-surface-700/50" />
+                <p className="px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-surface-500">
+                  Endpoints
+                </p>
+                <button
+                  onClick={() => {
+                    setShowRegisterMenu(false);
+                    openDialog({ type: 'registerWebhook' });
+                  }}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-surface-300 transition-colors hover:bg-surface-700"
+                >
+                  <Globe className="h-4 w-4 text-blue-400" />
+                  New Webhook
+                </button>
+                <button
+                  onClick={() => {
+                    setShowRegisterMenu(false);
+                    openDialog({ type: 'registerServiceEndpoint' });
+                  }}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-surface-300 transition-colors hover:bg-surface-700"
+                >
+                  <Cloud className="h-4 w-4 text-purple-400" />
+                  New Service Endpoint
                 </button>
                 <div className="mx-2 my-1 border-t border-surface-700/50" />
                 <p className="px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-surface-500">

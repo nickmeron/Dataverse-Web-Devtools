@@ -96,12 +96,28 @@ export const AUTH_TYPE = {
   HTTP_HEADER: 1,
   WEBHOOK_KEY: 2,
   HTTP_QUERY_STRING: 3,
+  SAS_KEY: 4,
+  SAS_TOKEN: 5,
 } as const;
 
 export const AUTH_TYPE_LABELS: Record<number, string> = {
   1: 'Http Header',
   2: 'Webhook Key',
   3: 'Http Query String',
+  4: 'SAS Key',
+  5: 'SAS Token',
+};
+
+export const USER_CLAIM = {
+  NONE: 0,
+  USER_ID: 1,
+  CONTACT_ID: 2,
+} as const;
+
+export const USER_CLAIM_LABELS: Record<number, string> = {
+  0: 'None',
+  1: 'UserId',
+  2: 'ContactId',
 };
 
 export const MESSAGE_FORMAT = {

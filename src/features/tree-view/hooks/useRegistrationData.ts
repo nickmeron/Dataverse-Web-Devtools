@@ -73,7 +73,7 @@ export function useWebhookSteps() {
     queryKey: queryKeys.webhooks.all,
     queryFn: () =>
       dataverseClient.getCollection<SdkMessageProcessingStep>(
-        `${endpoints.steps.list}?$select=sdkmessageprocessingstepid,name,stage,mode,rank,statecode,statuscode,_eventhandler_value,description&$filter=ishidden/Value eq false and _eventhandler_value ne null and _plugintypeid_value eq null`,
+        `${endpoints.steps.list}?$select=sdkmessageprocessingstepid,name,stage,mode,rank,filteringattributes,supporteddeployment,asyncautodelete,configuration,description,statecode,statuscode,_sdkmessageid_value,_sdkmessagefilterid_value,_plugintypeid_value,_impersonatinguserid_value,_eventhandler_value&$filter=ishidden/Value eq false and _eventhandler_value ne null&$orderby=name`,
       ),
     staleTime: 30_000,
   });

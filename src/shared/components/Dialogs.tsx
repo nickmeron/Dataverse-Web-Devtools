@@ -4,6 +4,7 @@ import { StepFormDialog } from '@/features/steps/components/StepFormDialog';
 import { AssemblyUploadDialog } from '@/features/assemblies/components/AssemblyUploadDialog';
 import { AssemblyUpdateDialog } from '@/features/assemblies/components/AssemblyUpdateDialog';
 import { ImageFormDialog } from '@/features/images/components/ImageFormDialog';
+import { ServiceEndpointFormDialog } from '@/features/service-endpoints/components/ServiceEndpointFormDialog';
 import { SessionDetailsDialog } from './SessionDetailsDialog';
 import { AlertTriangle } from 'lucide-react';
 
@@ -22,6 +23,8 @@ export function Dialogs() {
         <StepFormDialog
           mode="create"
           pluginTypeId={activeDialog.pluginTypeId}
+          eventHandlerId={activeDialog.eventHandlerId}
+          eventHandlerName={activeDialog.eventHandlerName}
           onClose={closeDialog}
         />
       );
@@ -62,6 +65,46 @@ export function Dialogs() {
         <ImageFormDialog
           mode="edit"
           imageId={activeDialog.imageId}
+          initialData={activeDialog.data}
+          onClose={closeDialog}
+        />
+      );
+
+    case 'registerWebhook':
+      return (
+        <ServiceEndpointFormDialog
+          mode="create"
+          variant="webhook"
+          onClose={closeDialog}
+        />
+      );
+
+    case 'editWebhook':
+      return (
+        <ServiceEndpointFormDialog
+          mode="edit"
+          variant="webhook"
+          endpointId={activeDialog.endpointId}
+          initialData={activeDialog.data}
+          onClose={closeDialog}
+        />
+      );
+
+    case 'registerServiceEndpoint':
+      return (
+        <ServiceEndpointFormDialog
+          mode="create"
+          variant="serviceEndpoint"
+          onClose={closeDialog}
+        />
+      );
+
+    case 'editServiceEndpoint':
+      return (
+        <ServiceEndpointFormDialog
+          mode="edit"
+          variant="serviceEndpoint"
+          endpointId={activeDialog.endpointId}
           initialData={activeDialog.data}
           onClose={closeDialog}
         />

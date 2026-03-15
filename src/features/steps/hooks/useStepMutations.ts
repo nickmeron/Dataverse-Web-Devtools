@@ -14,8 +14,10 @@ interface CreateStepPayload {
   asyncautodelete: boolean;
   configuration?: string;
   description?: string;
-  /** Bind to plugin type: /plugintypes(guid) */
-  'plugintypeid@odata.bind': string;
+  /** Bind to plugin type: /plugintypes(guid) — required for plugin steps */
+  'plugintypeid@odata.bind'?: string;
+  /** Bind to service endpoint (webhook/service bus): /serviceendpoints(guid) — required for endpoint steps */
+  'eventhandler@odata.bind'?: string;
   /** Bind to message: /sdkmessages(guid) */
   'sdkmessageid@odata.bind': string;
   /** Bind to message filter: /sdkmessagefilters(guid) */
@@ -47,6 +49,7 @@ export function useCreateStep() {
     onSuccess: () => {
       toast.success('Step registered successfully');
       qc.invalidateQueries({ queryKey: queryKeys.steps.all });
+      qc.invalidateQueries({ queryKey: queryKeys.webhooks.all });
     },
     onError: (err) => {
       toast.error(`Failed to register step: ${err.message}`);
@@ -62,6 +65,7 @@ export function useUpdateStep() {
     onSuccess: () => {
       toast.success('Step updated successfully');
       qc.invalidateQueries({ queryKey: queryKeys.steps.all });
+      qc.invalidateQueries({ queryKey: queryKeys.webhooks.all });
     },
     onError: (err) => {
       toast.error(`Failed to update step: ${err.message}`);

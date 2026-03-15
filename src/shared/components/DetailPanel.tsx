@@ -3,6 +3,7 @@ import { useTreeData } from '@/features/tree-view/hooks/useTreeData';
 import { useToggleStep, useDeleteStep } from '@/features/steps/hooks/useStepMutations';
 import { useDeleteAssembly } from '@/features/assemblies/hooks/useAssemblyMutations';
 import { useDeleteImage } from '@/features/images/hooks/useImageMutations';
+import { useDeleteServiceEndpoint } from '@/features/service-endpoints/hooks/useServiceEndpointMutations';
 import { useTraceLogStore } from '@/features/trace-logs/stores/traceLogStore';
 import { EmptyState } from './EmptyState';
 import {
@@ -32,6 +33,7 @@ import {
   CONTRACT_TYPE_LABELS,
   AUTH_TYPE_LABELS,
   MESSAGE_FORMAT_LABELS,
+  USER_CLAIM_LABELS,
 } from '@/config/constants';
 import type { TreeNode } from '@/shared/types/dataverse';
 
@@ -75,6 +77,7 @@ function NodeDetail({ node }: { node: TreeNode }) {
   const deleteStep = useDeleteStep();
   const deleteAssembly = useDeleteAssembly();
   const deleteImage = useDeleteImage();
+  const deleteEndpoint = useDeleteServiceEndpoint();
 
   const handleViewTraceLogs = () => {
     // Filter trace logs by the plugin type name (step name starts with typename)
@@ -266,6 +269,49 @@ function NodeDetail({ node }: { node: TreeNode }) {
             />
           </>
         )}
+
+        {/* Webhook / Service Endpoint actions */}
+        {(node.type === 'webhook' || node.type === 'serviceEndpoint') && (
+          <>
+            <ActionButton
+              icon={<Pencil className="h-3.5 w-3.5" />}
+              label="Edit"
+              onClick={() =>
+                openDialog({
+                  type: node.type === 'webhook' ? 'editWebhook' : 'editServiceEndpoint',
+                  endpointId: node.id,
+                  data,
+                })
+              }
+            />
+            <ActionButton
+              icon={<Plus className="h-3.5 w-3.5" />}
+              label="Register Step"
+              onClick={() =>
+                openDialog({
+                  type: 'registerStep',
+                  eventHandlerId: node.id,
+                  eventHandlerName: node.label,
+                })
+              }
+            />
+            <ActionButton
+              icon={<Trash2 className="h-3.5 w-3.5" />}
+              label="Delete"
+              variant="danger"
+              isLoading={deleteEndpoint.isPending}
+              onClick={() =>
+                openDialog({
+                  type: 'confirm',
+                  title: `Delete ${node.type === 'webhook' ? 'Webhook' : 'Service Endpoint'}`,
+                  message: `Are you sure you want to delete "${node.label}"? This will also remove all steps registered against it.`,
+                  onConfirm: () => deleteEndpoint.mutate(node.id),
+                  variant: 'danger',
+                })
+              }
+            />
+          </>
+        )}
       </div>
 
       {/* Properties */}
@@ -383,12 +429,21 @@ function NodeDetail({ node }: { node: TreeNode }) {
               />
               <PropRow label="URL" value={str(data.url)} />
               <PropRow
+                label="Namespace Address"
+                value={str(data.namespaceaddress)}
+              />
+              <PropRow label="Path" value={str(data.path)} />
+              <PropRow
                 label="Auth Type"
                 value={AUTH_TYPE_LABELS[num(data.authtype)] ?? 'None'}
               />
               <PropRow
                 label="Message Format"
                 value={MESSAGE_FORMAT_LABELS[num(data.messageformat)]}
+              />
+              <PropRow
+                label="User Information Sent"
+                value={USER_CLAIM_LABELS[num(data.userclaim)] ?? 'None'}
               />
               <PropRow label="Description" value={str(data.description)} />
             </>

@@ -23,11 +23,14 @@ import {
   MODE_LABELS,
   SUPPORTED_DEPLOYMENT_LABELS,
 } from '@/config/constants';
-import { Search, X, Check } from 'lucide-react';
+import { Search, X, Check, Globe } from 'lucide-react';
 
 interface StepFormDialogProps {
   mode: 'create' | 'edit';
   pluginTypeId?: string;
+  /** When registering a step against a service endpoint or webhook */
+  eventHandlerId?: string;
+  eventHandlerName?: string;
   stepId?: string;
   initialData?: Record<string, unknown>;
   onClose: () => void;
@@ -70,10 +73,14 @@ const INITIAL_STATE: StepFormState = {
 export function StepFormDialog({
   mode,
   pluginTypeId,
+  eventHandlerId,
+  eventHandlerName,
   stepId,
   initialData,
   onClose,
 }: StepFormDialogProps) {
+  const isEndpointStep = Boolean(eventHandlerId);
+
   const [form, setForm] = useState<StepFormState>(() => {
     if (mode === 'edit' && initialData) {
       return {
@@ -230,6 +237,14 @@ export function StepFormDialog({
   };
 
   const buildStepName = () => {
+    if (isEndpointStep) {
+      const handlerName = eventHandlerName ?? 'Endpoint';
+      const msgName = form.messageName || 'Message';
+      const entity = form.entityName || '';
+      return entity
+        ? `${handlerName}: ${msgName} of ${entity}`
+        : `${handlerName}: ${msgName}`;
+    }
     const pt = pluginTypes.data?.find(
       (t) => t.plugintypeid === form.pluginTypeId,
     );
@@ -242,7 +257,9 @@ export function StepFormDialog({
   };
 
   const handleSubmit = () => {
-    if (!form.pluginTypeId || !form.messageId) return;
+    // For endpoint steps, we need eventHandlerId + message; for plugin steps, pluginTypeId + message
+    if (!isEndpointStep && !form.pluginTypeId) return;
+    if (!form.messageId) return;
 
     if (mode === 'create') {
       const payload: Record<string, unknown> = {
@@ -252,9 +269,16 @@ export function StepFormDialog({
         rank: form.rank,
         supporteddeployment: form.supportedDeployment,
         asyncautodelete: form.asyncAutoDelete,
-        'plugintypeid@odata.bind': `/plugintypes(${form.pluginTypeId})`,
         'sdkmessageid@odata.bind': `/sdkmessages(${form.messageId})`,
       };
+
+      if (isEndpointStep && eventHandlerId) {
+        // Polymorphic lookup: use qualified navigation property name
+        payload['eventhandler_serviceendpoint@odata.bind'] = `/serviceendpoints(${eventHandlerId})`;
+      } else {
+        payload['plugintypeid@odata.bind'] = `/plugintypes(${form.pluginTypeId})`;
+      }
+
       if (form.filterId) {
         payload['sdkmessagefilterid@odata.bind'] =
           `/sdkmessagefilters(${form.filterId})`;
@@ -311,7 +335,15 @@ export function StepFormDialog({
     if (!messages.data) return [];
     if (!msgSearch.trim()) return messages.data;
     const q = msgSearch.toLowerCase();
-    return messages.data.filter((m) => m.name.toLowerCase().includes(q));
+    const matches = messages.data.filter((m) => m.name.toLowerCase().includes(q));
+    // Sort: exact match first, then starts-with, then includes
+    return matches.sort((a, b) => {
+      const an = a.name.toLowerCase();
+      const bn = b.name.toLowerCase();
+      const aExact = an === q ? 0 : an.startsWith(q) ? 1 : 2;
+      const bExact = bn === q ? 0 : bn.startsWith(q) ? 1 : 2;
+      return aExact !== bExact ? aExact - bExact : an.localeCompare(bn);
+    });
   }, [messages.data, msgSearch]);
 
   return (
@@ -321,27 +353,43 @@ export function StepFormDialog({
       title={mode === 'create' ? 'Register New Step' : 'Edit Step'}
       description={
         mode === 'create'
-          ? 'Configure a new SDK message processing step'
+          ? isEndpointStep
+            ? `Register a step on ${eventHandlerName ?? 'the endpoint'}`
+            : 'Configure a new SDK message processing step'
           : 'Update step configuration'
       }
       maxWidth="max-w-2xl"
     >
       <div className="space-y-4">
-        {/* Plugin Type */}
-        <FormField label="Plugin Type" required>
-          <FormSelect
-            value={form.pluginTypeId}
-            onChange={(v) => update({ pluginTypeId: v })}
-            placeholder="Select a plugin type..."
-            disabled={mode === 'edit'}
-            options={
-              pluginTypes.data?.map((pt) => ({
-                label: pt.typename,
-                value: pt.plugintypeid,
-              })) ?? []
-            }
-          />
-        </FormField>
+        {/* Event Handler (for endpoint steps) */}
+        {isEndpointStep && (
+          <FormField label="Event Handler">
+            <div className="flex items-center gap-2 rounded-md border border-surface-700 bg-surface-900/50 px-3 py-2">
+              <Globe className="h-4 w-4 text-blue-400" />
+              <span className="text-sm text-surface-200">
+                {eventHandlerName ?? 'Service Endpoint'}
+              </span>
+            </div>
+          </FormField>
+        )}
+
+        {/* Plugin Type (for regular plugin steps) */}
+        {!isEndpointStep && (
+          <FormField label="Plugin Type" required>
+            <FormSelect
+              value={form.pluginTypeId}
+              onChange={(v) => update({ pluginTypeId: v })}
+              placeholder="Select a plugin type..."
+              disabled={mode === 'edit'}
+              options={
+                pluginTypes.data?.map((pt) => ({
+                  label: pt.typename,
+                  value: pt.plugintypeid,
+                })) ?? []
+              }
+            />
+          </FormField>
+        )}
 
         {/* Message */}
         <FormField label="Message" required>

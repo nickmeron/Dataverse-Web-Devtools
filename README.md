@@ -23,8 +23,10 @@ The official Plugin Registration Tool is a Windows-only desktop app that require
 
 ### Step Registration & Configuration
 - Register new plugin steps with full configuration
+- Smart message search — exact matches shown first, then prefix, then partial
 - Entity/message/stage/mode selection with live lookups from your environment
-- Filtering attributes, execution order (rank), deployment scope
+- Filtering attributes with searchable attribute picker
+- Execution order (rank), deployment scope, impersonation (Run in User's Context)
 - Enable/disable steps with one click
 - Unsecure configuration editing
 - Async auto-delete toggle
@@ -35,8 +37,12 @@ The official Plugin Registration Tool is a Windows-only desktop app that require
 - Attribute picker pulls available columns from your environment
 
 ### Service Endpoints & Webhooks
-- View registered service endpoints and webhooks
-- See endpoint details: URL, contract type, auth type, message format
+- Register, edit, and delete service endpoints and webhooks
+- Full Service Bus support: Namespace Address, Queue/Topic/Event Hub, SAS Key & SAS Token auth
+- Webhook support: HTTP Header, Webhook Key, HTTP Query String auth
+- Message format (JSON / XML / .NET Binary) and User Information Sent configuration
+- Register steps directly against service endpoints and webhooks
+- Filter tree by type: Plugins / Webhooks / Endpoints
 
 ### Plugin Trace Log Viewer
 - Full trace log viewer with real-time filtering and sortable columns
@@ -67,14 +73,17 @@ The official Plugin Registration Tool is a Windows-only desktop app that require
 
 ## Screenshots
 
-> Add screenshots to `docs/screenshots/` and they'll appear here.
+### Registrations Tree
+![Registrations Tree](docs/screenshots/registrations-tree.png)
 
-<!--
-![Registrations View](docs/screenshots/registrations.png)
-![Trace Log Viewer](docs/screenshots/trace-logs.png)
-![Monitoring Dashboard](docs/screenshots/monitoring.png)
-![Step Detail Panel](docs/screenshots/step-detail.png)
--->
+### Edit Step Dialog
+![Edit Step](docs/screenshots/edit-step.png)
+
+### Service Endpoint Registration
+![Service Endpoint Form](docs/screenshots/service-endpoint-form.png)
+
+### Trace Log Viewer & Monitoring Dashboard
+![Trace Logs](docs/screenshots/trace-logs.png)
 
 ## Getting Started
 
