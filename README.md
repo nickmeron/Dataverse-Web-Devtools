@@ -73,6 +73,8 @@ The official Plugin Registration Tool is a Windows-only desktop app that require
 
 ## Screenshots
 
+![Main](docs/screenshots/main-image.png)
+
 ### Registrations Tree
 ![Registrations Tree](docs/screenshots/registrations-tree.png?v=2)
 
