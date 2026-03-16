@@ -135,15 +135,17 @@ export function StepFormDialog({
     existingSecureConfigId || undefined,
   );
 
-  // Populate the secure config field once fetched
+  // Populate the secure config field once fetched (only on initial load)
+  const [secureConfigLoaded, setSecureConfigLoaded] = useState(false);
   useEffect(() => {
-    if (secureConfigQuery.data?.secureconfig && !form.secureConfig) {
+    if (secureConfigQuery.data?.secureconfig && !secureConfigLoaded) {
+      setSecureConfigLoaded(true);
       setForm((prev) => ({
         ...prev,
         secureConfig: secureConfigQuery.data!.secureconfig,
       }));
     }
-  }, [secureConfigQuery.data, form.secureConfig]);
+  }, [secureConfigQuery.data, secureConfigLoaded]);
 
   // Build entity count per message from all filters
   const msgEntityCounts = useMemo(() => {
