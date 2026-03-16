@@ -17,6 +17,9 @@ export const queryKeys = {
   entities: {
     attributes: (entity: string) => ['entities', entity, 'attributes'] as const,
   },
+  secureConfigs: {
+    detail: (id: string) => ['secureConfigs', id] as const,
+  },
   webhooks: { all: ['webhooks'] as const },
   serviceEndpoints: { all: ['serviceEndpoints'] as const },
   traceLogs: {

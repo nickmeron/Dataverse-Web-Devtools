@@ -24,6 +24,8 @@ interface CreateStepPayload {
   'sdkmessagefilterid@odata.bind'?: string;
   /** Bind to impersonation user: /systemusers(guid) */
   'impersonatinguserid@odata.bind'?: string;
+  /** Bind to secure config: /sdkmessageprocessingstepsecureconfigs(guid) */
+  'sdkmessageprocessingstepsecureconfigid@odata.bind'?: string;
 }
 
 interface UpdateStepPayload {
@@ -39,6 +41,7 @@ interface UpdateStepPayload {
   'sdkmessageid@odata.bind'?: string;
   'sdkmessagefilterid@odata.bind'?: string | null;
   'impersonatinguserid@odata.bind'?: string | null;
+  'sdkmessageprocessingstepsecureconfigid@odata.bind'?: string | null;
 }
 
 export function useCreateStep() {

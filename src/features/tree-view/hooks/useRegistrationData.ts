@@ -40,7 +40,7 @@ export function useSteps() {
     queryKey: queryKeys.steps.all,
     queryFn: () =>
       dataverseClient.getCollection<SdkMessageProcessingStep>(
-        `${endpoints.steps.list}?$select=sdkmessageprocessingstepid,name,stage,mode,rank,filteringattributes,supporteddeployment,asyncautodelete,configuration,description,statecode,statuscode,_sdkmessageid_value,_sdkmessagefilterid_value,_plugintypeid_value,_impersonatinguserid_value,_eventhandler_value&$filter=ishidden/Value eq false and _plugintypeid_value ne null&$orderby=name`,
+        `${endpoints.steps.list}?$select=sdkmessageprocessingstepid,name,stage,mode,rank,filteringattributes,supporteddeployment,asyncautodelete,configuration,description,statecode,statuscode,_sdkmessageid_value,_sdkmessagefilterid_value,_plugintypeid_value,_impersonatinguserid_value,_eventhandler_value,_sdkmessageprocessingstepsecureconfigid_value&$filter=ishidden/Value eq false and _plugintypeid_value ne null&$orderby=name`,
       ),
     staleTime: 30_000,
   });
@@ -73,7 +73,7 @@ export function useWebhookSteps() {
     queryKey: queryKeys.webhooks.all,
     queryFn: () =>
       dataverseClient.getCollection<SdkMessageProcessingStep>(
-        `${endpoints.steps.list}?$select=sdkmessageprocessingstepid,name,stage,mode,rank,filteringattributes,supporteddeployment,asyncautodelete,configuration,description,statecode,statuscode,_sdkmessageid_value,_sdkmessagefilterid_value,_plugintypeid_value,_impersonatinguserid_value,_eventhandler_value&$filter=ishidden/Value eq false and _eventhandler_value ne null&$orderby=name`,
+        `${endpoints.steps.list}?$select=sdkmessageprocessingstepid,name,stage,mode,rank,filteringattributes,supporteddeployment,asyncautodelete,configuration,description,statecode,statuscode,_sdkmessageid_value,_sdkmessagefilterid_value,_plugintypeid_value,_impersonatinguserid_value,_eventhandler_value,_sdkmessageprocessingstepsecureconfigid_value&$filter=ishidden/Value eq false and _eventhandler_value ne null&$orderby=name`,
       ),
     staleTime: 30_000,
   });

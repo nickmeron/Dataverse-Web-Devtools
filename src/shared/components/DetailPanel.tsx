@@ -395,6 +395,14 @@ function NodeDetail({ node }: { node: TreeNode }) {
                   mono
                 />
               )}
+              <PropRow
+                label="Secure Config"
+                value={
+                  data._sdkmessageprocessingstepsecureconfigid_value
+                    ? 'Configured'
+                    : undefined
+                }
+              />
             </>
           )}
           {node.type === 'image' && (
