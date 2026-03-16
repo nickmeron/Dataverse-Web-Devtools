@@ -13,9 +13,12 @@ import {
   useMessageFilters,
   useEntityAttributes,
   useSystemUsers,
+  useSecureConfig,
 } from '../hooks/useStepLookups';
 import { useCreateStep, useUpdateStep } from '../hooks/useStepMutations';
 import { usePluginTypes } from '@/features/tree-view/hooks/useRegistrationData';
+import { dataverseClient } from '@/shared/api/dataverseClient';
+import { endpoints } from '@/shared/api/endpoints';
 import {
   STAGE,
   STAGE_LABELS,
@@ -24,6 +27,7 @@ import {
   SUPPORTED_DEPLOYMENT_LABELS,
 } from '@/config/constants';
 import { Search, X, Check, Globe } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 interface StepFormDialogProps {
   mode: 'create' | 'edit';
@@ -49,6 +53,7 @@ interface StepFormState {
   filteringAttributes: string;
   asyncAutoDelete: boolean;
   unsecureConfig: string;
+  secureConfig: string;
   description: string;
   impersonatingUserId: string;
 }
@@ -66,6 +71,7 @@ const INITIAL_STATE: StepFormState = {
   filteringAttributes: '',
   asyncAutoDelete: false,
   unsecureConfig: '',
+  secureConfig: '',
   description: '',
   impersonatingUserId: '',
 };
@@ -80,6 +86,12 @@ export function StepFormDialog({
   onClose,
 }: StepFormDialogProps) {
   const isEndpointStep = Boolean(eventHandlerId);
+
+  // Track the existing secure config ID for edit mode
+  const existingSecureConfigId =
+    mode === 'edit' && initialData
+      ? String(initialData._sdkmessageprocessingstepsecureconfigid_value ?? '')
+      : '';
 
   const [form, setForm] = useState<StepFormState>(() => {
     if (mode === 'edit' && initialData) {
@@ -96,6 +108,7 @@ export function StepFormDialog({
         filteringAttributes: String(initialData.filteringattributes ?? ''),
         asyncAutoDelete: Boolean(initialData.asyncautodelete),
         unsecureConfig: String(initialData.configuration ?? ''),
+        secureConfig: '', // loaded async from secure config record
         description: String(initialData.description ?? ''),
         impersonatingUserId: String(
           initialData._impersonatinguserid_value ?? '',
@@ -117,6 +130,21 @@ export function StepFormDialog({
   );
   const users = useSystemUsers();
 
+  // Fetch existing secure config value when editing
+  const secureConfigQuery = useSecureConfig(
+    existingSecureConfigId || undefined,
+  );
+
+  // Populate the secure config field once fetched
+  useEffect(() => {
+    if (secureConfigQuery.data?.secureconfig && !form.secureConfig) {
+      setForm((prev) => ({
+        ...prev,
+        secureConfig: secureConfigQuery.data!.secureconfig,
+      }));
+    }
+  }, [secureConfigQuery.data, form.secureConfig]);
+
   // Build entity count per message from all filters
   const msgEntityCounts = useMemo(() => {
     if (!allFilters.data) return new Map<string, number>();
@@ -135,7 +163,7 @@ export function StepFormDialog({
   // Mutations
   const createStep = useCreateStep();
   const updateStep = useUpdateStep();
-  const isSubmitting = createStep.isPending || updateStep.isPending;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Resolve message name + entity from filters when editing
   useEffect(() => {
@@ -172,6 +200,21 @@ export function StepFormDialog({
       .filter((e) => e.entity !== 'none')
       .sort((a, b) => a.entity.localeCompare(b.entity));
   }, [messageFilters.data]);
+
+  // Resolve secondary entity from the selected filter
+  const secondaryEntity = useMemo(() => {
+    if (!messageFilters.data || !form.filterId) return null;
+    const filter = messageFilters.data.find(
+      (f) => f.sdkmessagefilterid === form.filterId,
+    );
+    if (
+      filter?.secondaryobjecttypecode &&
+      filter.secondaryobjecttypecode !== 'none'
+    ) {
+      return filter.secondaryobjecttypecode;
+    }
+    return null;
+  }, [messageFilters.data, form.filterId]);
 
   // Filtered entity attributes for the multi-select
   const filteredAttributes = useMemo(() => {
@@ -256,76 +299,138 @@ export function StepFormDialog({
       : `${typeName}: ${msgName}`;
   };
 
-  const handleSubmit = () => {
-    // For endpoint steps, we need eventHandlerId + message; for plugin steps, pluginTypeId + message
+  /**
+   * Create or update the secure config record and return the ID to bind.
+   * Returns null if no secure config is needed.
+   */
+  const handleSecureConfig = async (): Promise<string | null> => {
+    const hasValue = form.secureConfig.trim().length > 0;
+
+    if (mode === 'create') {
+      if (!hasValue) return null;
+      const result = await dataverseClient.post<{ id?: string }>(
+        endpoints.secureConfigs.list,
+        { secureconfig: form.secureConfig },
+      );
+      return result.id ?? null;
+    }
+
+    // Edit mode
+    if (existingSecureConfigId) {
+      if (hasValue) {
+        // Update existing secure config
+        await dataverseClient.patch(
+          endpoints.secureConfigs.detail(existingSecureConfigId),
+          { secureconfig: form.secureConfig },
+        );
+        return existingSecureConfigId;
+      } else {
+        // Value cleared — unlink (we won't delete the record to be safe)
+        return ''; // empty string signals "unlink"
+      }
+    } else {
+      if (!hasValue) return null;
+      // Create new secure config for existing step
+      const result = await dataverseClient.post<{ id?: string }>(
+        endpoints.secureConfigs.list,
+        { secureconfig: form.secureConfig },
+      );
+      return result.id ?? null;
+    }
+  };
+
+  const handleSubmit = async () => {
     if (!isEndpointStep && !form.pluginTypeId) return;
     if (!form.messageId) return;
 
-    if (mode === 'create') {
-      const payload: Record<string, unknown> = {
-        name: buildStepName(),
-        stage: form.stage,
-        mode: form.executionMode,
-        rank: form.rank,
-        supporteddeployment: form.supportedDeployment,
-        asyncautodelete: form.asyncAutoDelete,
-        'sdkmessageid@odata.bind': `/sdkmessages(${form.messageId})`,
-      };
+    setIsSubmitting(true);
+    try {
+      // Handle secure config first
+      const secureConfigId = await handleSecureConfig();
 
-      if (isEndpointStep && eventHandlerId) {
-        // Polymorphic lookup: use qualified navigation property name
-        payload['eventhandler_serviceendpoint@odata.bind'] = `/serviceendpoints(${eventHandlerId})`;
-      } else {
-        payload['plugintypeid@odata.bind'] = `/plugintypes(${form.pluginTypeId})`;
-      }
+      if (mode === 'create') {
+        const payload: Record<string, unknown> = {
+          name: buildStepName(),
+          stage: form.stage,
+          mode: form.executionMode,
+          rank: form.rank,
+          supporteddeployment: form.supportedDeployment,
+          asyncautodelete: form.asyncAutoDelete,
+          'sdkmessageid@odata.bind': `/sdkmessages(${form.messageId})`,
+        };
 
-      if (form.filterId) {
-        payload['sdkmessagefilterid@odata.bind'] =
-          `/sdkmessagefilters(${form.filterId})`;
-      }
-      if (form.filteringAttributes) {
-        payload.filteringattributes = form.filteringAttributes;
-      }
-      if (form.unsecureConfig) {
-        payload.configuration = form.unsecureConfig;
-      }
-      if (form.description) {
-        payload.description = form.description;
-      }
-      if (form.impersonatingUserId) {
-        payload['impersonatinguserid@odata.bind'] =
-          `/systemusers(${form.impersonatingUserId})`;
-      }
+        if (isEndpointStep && eventHandlerId) {
+          payload['eventhandler_serviceendpoint@odata.bind'] = `/serviceendpoints(${eventHandlerId})`;
+        } else {
+          payload['plugintypeid@odata.bind'] = `/plugintypes(${form.pluginTypeId})`;
+        }
 
-      createStep.mutate(payload as never, { onSuccess: onClose });
-    } else if (mode === 'edit' && stepId) {
-      const payload: Record<string, unknown> = {
-        name: buildStepName(),
-        stage: form.stage,
-        mode: form.executionMode,
-        rank: form.rank,
-        supporteddeployment: form.supportedDeployment,
-        asyncautodelete: form.asyncAutoDelete,
-        filteringattributes: form.filteringAttributes || null,
-        configuration: form.unsecureConfig || null,
-        description: form.description || null,
-        'sdkmessageid@odata.bind': `/sdkmessages(${form.messageId})`,
-      };
-      if (form.filterId) {
-        payload['sdkmessagefilterid@odata.bind'] =
-          `/sdkmessagefilters(${form.filterId})`;
-      }
-      if (form.impersonatingUserId) {
-        payload['impersonatinguserid@odata.bind'] =
-          `/systemusers(${form.impersonatingUserId})`;
-      } else {
-        payload['impersonatinguserid@odata.bind'] = null;
-      }
+        if (form.filterId) {
+          payload['sdkmessagefilterid@odata.bind'] =
+            `/sdkmessagefilters(${form.filterId})`;
+        }
+        if (form.filteringAttributes) {
+          payload.filteringattributes = form.filteringAttributes;
+        }
+        if (form.unsecureConfig) {
+          payload.configuration = form.unsecureConfig;
+        }
+        if (form.description) {
+          payload.description = form.description;
+        }
+        if (form.impersonatingUserId) {
+          payload['impersonatinguserid@odata.bind'] =
+            `/systemusers(${form.impersonatingUserId})`;
+        }
+        if (secureConfigId) {
+          payload['sdkmessageprocessingstepsecureconfigid@odata.bind'] =
+            `/sdkmessageprocessingstepsecureconfigs(${secureConfigId})`;
+        }
 
-      updateStep.mutate(
-        { id: stepId, payload: payload as never },
-        { onSuccess: onClose },
+        createStep.mutate(payload as never, { onSuccess: onClose });
+      } else if (mode === 'edit' && stepId) {
+        const payload: Record<string, unknown> = {
+          name: buildStepName(),
+          stage: form.stage,
+          mode: form.executionMode,
+          rank: form.rank,
+          supporteddeployment: form.supportedDeployment,
+          asyncautodelete: form.asyncAutoDelete,
+          filteringattributes: form.filteringAttributes || null,
+          configuration: form.unsecureConfig || null,
+          description: form.description || null,
+          'sdkmessageid@odata.bind': `/sdkmessages(${form.messageId})`,
+        };
+        if (form.filterId) {
+          payload['sdkmessagefilterid@odata.bind'] =
+            `/sdkmessagefilters(${form.filterId})`;
+        }
+        if (form.impersonatingUserId) {
+          payload['impersonatinguserid@odata.bind'] =
+            `/systemusers(${form.impersonatingUserId})`;
+        } else {
+          payload['impersonatinguserid@odata.bind'] = null;
+        }
+
+        // Link/unlink secure config
+        if (secureConfigId === '') {
+          // Unlink
+          payload['sdkmessageprocessingstepsecureconfigid@odata.bind'] = null;
+        } else if (secureConfigId) {
+          payload['sdkmessageprocessingstepsecureconfigid@odata.bind'] =
+            `/sdkmessageprocessingstepsecureconfigs(${secureConfigId})`;
+        }
+
+        updateStep.mutate(
+          { id: stepId, payload: payload as never },
+          { onSuccess: onClose },
+        );
+      }
+    } catch (err) {
+      toast.error(
+        `Secure config error: ${err instanceof Error ? err.message : 'Unknown error'}`,
       );
+      setIsSubmitting(false);
     }
   };
 
@@ -479,7 +584,7 @@ export function StepFormDialog({
           </div>
         </FormField>
 
-        {/* Entity */}
+        {/* Primary Entity */}
         {availableEntities.length > 0 && (
           <FormField label="Primary Entity">
             <FormSelect
@@ -491,6 +596,18 @@ export function StepFormDialog({
                 value: e.entity,
               }))}
             />
+          </FormField>
+        )}
+
+        {/* Secondary Entity (read-only, derived from message filter) */}
+        {secondaryEntity && (
+          <FormField
+            label="Secondary Entity"
+            hint="Determined by the message filter"
+          >
+            <div className="rounded-md border border-surface-700 bg-surface-900/50 px-3 py-1.5 text-sm text-surface-400">
+              {secondaryEntity}
+            </div>
           </FormField>
         )}
 
@@ -662,6 +779,19 @@ export function StepFormDialog({
           />
         </FormField>
 
+        {/* Secure Configuration */}
+        <FormField
+          label="Secure Configuration"
+          hint="Only accessible by System Administrators and the plugin at runtime"
+        >
+          <FormTextarea
+            value={form.secureConfig}
+            onChange={(v) => update({ secureConfig: v })}
+            placeholder="Sensitive configuration data (API keys, connection strings)..."
+            mono
+          />
+        </FormField>
+
         {/* Description */}
         <FormField label="Description">
           <FormTextarea
@@ -677,7 +807,7 @@ export function StepFormDialog({
         onCancel={onClose}
         onSubmit={handleSubmit}
         submitLabel={mode === 'create' ? 'Register' : 'Update'}
-        isSubmitting={isSubmitting}
+        isSubmitting={isSubmitting || createStep.isPending || updateStep.isPending}
       />
     </Dialog>
   );

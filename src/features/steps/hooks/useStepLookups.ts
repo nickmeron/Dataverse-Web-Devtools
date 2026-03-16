@@ -5,6 +5,7 @@ import { queryKeys } from '@/shared/api/queryKeys';
 import type {
   SdkMessage,
   SdkMessageFilter,
+  SecureConfig,
   SystemUser,
 } from '@/shared/types/dataverse';
 
@@ -79,6 +80,22 @@ export function useEntityAttributes(entityLogicalName: string | undefined) {
     },
     enabled: !!entityLogicalName && entityLogicalName !== 'none',
     staleTime: 10 * 60_000,
+  });
+}
+
+/**
+ * Fetch a secure configuration record by ID.
+ * Used when editing a step that has a linked secure config.
+ */
+export function useSecureConfig(secureConfigId: string | undefined) {
+  return useQuery({
+    queryKey: queryKeys.secureConfigs.detail(secureConfigId ?? ''),
+    queryFn: () =>
+      dataverseClient.get<SecureConfig>(
+        `${endpoints.secureConfigs.detail(secureConfigId!)}?$select=sdkmessageprocessingstepsecureconfigid,secureconfig`,
+      ),
+    enabled: !!secureConfigId,
+    staleTime: 30_000,
   });
 }
 
