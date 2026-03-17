@@ -111,7 +111,7 @@ export const useUiStore = create<UiState>()(
       sidebarCollapsed: false,
       setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
 
-      theme: 'dark',
+      theme: 'light',
       toggleTheme: () =>
         set((state) => ({
           theme: state.theme === 'dark' ? 'light' : 'dark',
