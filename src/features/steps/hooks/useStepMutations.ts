@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { dataverseClient } from '@/shared/api/dataverseClient';
 import { endpoints } from '@/shared/api/endpoints';
 import { queryKeys } from '@/shared/api/queryKeys';
+import { useUiStore } from '@/shared/stores/uiStore';
 import toast from 'react-hot-toast';
 
 interface CreateStepPayload {
@@ -78,13 +79,41 @@ export function useUpdateStep() {
 
 export function useDeleteStep() {
   const qc = useQueryClient();
+  const { selectedNode, setSelectedNode } = useUiStore();
+
   return useMutation({
     mutationFn: (id: string) =>
       dataverseClient.delete(endpoints.steps.detail(id)),
-    onSuccess: () => {
+    onSuccess: (_, stepId) => {
       toast.success('Step deleted');
-      qc.invalidateQueries({ queryKey: queryKeys.steps.all });
-      qc.invalidateQueries({ queryKey: ['stepImages'] });
+
+      // Immediately remove the deleted step from the cache for instant UI update
+      qc.setQueryData(queryKeys.steps.all, (oldData: any) => {
+        if (!oldData) return oldData;
+        return oldData.filter(
+          (step: any) => step.sdkmessageprocessingstepid !== stepId,
+        );
+      });
+
+      qc.setQueryData(queryKeys.webhooks.all, (oldData: any) => {
+        if (!oldData) return oldData;
+        return oldData.filter(
+          (step: any) => step.sdkmessageprocessingstepid !== stepId,
+        );
+      });
+
+      // Also remove associated step images immediately
+      qc.setQueryData(['stepImages'], (oldData: any) => {
+        if (!oldData) return oldData;
+        return oldData.filter(
+          (img: any) => img._sdkmessageprocessingstepid_value !== stepId,
+        );
+      });
+
+      // Clear selected node if the deleted step was selected
+      if (selectedNode?.id === stepId) {
+        setSelectedNode(null);
+      }
     },
     onError: (err) => {
       toast.error(`Failed to delete step: ${err.message}`);
