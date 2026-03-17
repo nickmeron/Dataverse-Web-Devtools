@@ -22,6 +22,7 @@ import {
   Upload,
   Loader2,
   ScrollText,
+  Copy,
 } from 'lucide-react';
 import {
   STAGE_LABELS,
@@ -281,6 +282,16 @@ function NodeDetail({ node }: { node: TreeNode }) {
                   type: node.type === 'webhook' ? 'editWebhook' : 'editServiceEndpoint',
                   endpointId: node.id,
                   data,
+                })
+              }
+            />
+            <ActionButton
+              icon={<Copy className="h-3.5 w-3.5" />}
+              label="Copy"
+              onClick={() =>
+                openDialog({
+                  type: node.type === 'webhook' ? 'registerWebhook' : 'registerServiceEndpoint',
+                  templateData: data,
                 })
               }
             />

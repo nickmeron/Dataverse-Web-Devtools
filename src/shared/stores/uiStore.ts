@@ -18,9 +18,9 @@ export type DialogType =
   | { type: 'updateAssembly'; assemblyId: string; assemblyName: string }
   | { type: 'registerImage'; stepId: string }
   | { type: 'editImage'; imageId: string; data: Record<string, unknown> }
-  | { type: 'registerWebhook' }
+  | { type: 'registerWebhook'; templateData?: Record<string, unknown> }
   | { type: 'editWebhook'; endpointId: string; data: Record<string, unknown> }
-  | { type: 'registerServiceEndpoint' }
+  | { type: 'registerServiceEndpoint'; templateData?: Record<string, unknown> }
   | { type: 'editServiceEndpoint'; endpointId: string; data: Record<string, unknown> }
   | { type: 'sessionDetails' }
   | {

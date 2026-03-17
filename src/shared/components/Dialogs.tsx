@@ -75,6 +75,7 @@ export function Dialogs() {
         <ServiceEndpointFormDialog
           mode="create"
           variant="webhook"
+          templateData={activeDialog.templateData}
           onClose={closeDialog}
         />
       );
@@ -95,6 +96,7 @@ export function Dialogs() {
         <ServiceEndpointFormDialog
           mode="create"
           variant="serviceEndpoint"
+          templateData={activeDialog.templateData}
           onClose={closeDialog}
         />
       );
