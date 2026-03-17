@@ -40,18 +40,18 @@ const SERVICE_ENDPOINT_CONTRACT_OPTIONS = Object.entries(CONTRACT_TYPE_LABELS)
   .map(([value, label]) => ({ value: Number(value), label }));
 
 /* Webhook auth options: HttpHeader, WebhookKey, HttpQueryString */
-const WEBHOOK_AUTH_OPTIONS: { label: string; value: string | number }[] = [
+const WEBHOOK_AUTH_OPTIONS: { label: string; value: string }[] = [
   { label: 'None', value: '' },
-  { label: 'Http Header', value: AUTH_TYPE.HTTP_HEADER },
-  { label: 'Webhook Key', value: AUTH_TYPE.WEBHOOK_KEY },
-  { label: 'Http Query String', value: AUTH_TYPE.HTTP_QUERY_STRING },
+  { label: 'Http Header', value: String(AUTH_TYPE.HTTP_HEADER) },
+  { label: 'Webhook Key', value: String(AUTH_TYPE.WEBHOOK_KEY) },
+  { label: 'Http Query String', value: String(AUTH_TYPE.HTTP_QUERY_STRING) },
 ];
 
 /* Service Bus auth options: SASKey, SASToken */
-const SERVICE_BUS_AUTH_OPTIONS: { label: string; value: string | number }[] = [
+const SERVICE_BUS_AUTH_OPTIONS: { label: string; value: string }[] = [
   { label: 'None', value: '' },
-  { label: 'SAS Key', value: AUTH_TYPE.SAS_KEY },
-  { label: 'SAS Token', value: AUTH_TYPE.SAS_TOKEN },
+  { label: 'SAS Key', value: String(AUTH_TYPE.SAS_KEY) },
+  { label: 'SAS Token', value: String(AUTH_TYPE.SAS_TOKEN) },
 ];
 
 const MESSAGE_FORMAT_OPTIONS = Object.entries(MESSAGE_FORMAT_LABELS).map(
