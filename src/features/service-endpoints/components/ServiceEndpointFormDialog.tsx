@@ -14,7 +14,6 @@ import {
 import {
   CONTRACT_TYPE,
   CONTRACT_TYPE_LABELS,
-  AUTH_TYPE,
   MESSAGE_FORMAT,
   MESSAGE_FORMAT_LABELS,
   USER_CLAIM_LABELS,
@@ -28,6 +27,8 @@ interface Props {
   variant: 'webhook' | 'serviceEndpoint';
   endpointId?: string;
   initialData?: Record<string, unknown>;
+  /** Template data for copying an existing endpoint (used in create mode) */
+  templateData?: Record<string, unknown>;
   onClose: () => void;
 }
 
@@ -40,18 +41,18 @@ const SERVICE_ENDPOINT_CONTRACT_OPTIONS = Object.entries(CONTRACT_TYPE_LABELS)
   .map(([value, label]) => ({ value: Number(value), label }));
 
 /* Webhook auth options: HttpHeader, WebhookKey, HttpQueryString */
-const WEBHOOK_AUTH_OPTIONS: { label: string; value: string | number }[] = [
+const WEBHOOK_AUTH_OPTIONS: { label: string; value: string }[] = [
   { label: 'None', value: '' },
-  { label: 'Http Header', value: AUTH_TYPE.HTTP_HEADER },
-  { label: 'Webhook Key', value: AUTH_TYPE.WEBHOOK_KEY },
-  { label: 'Http Query String', value: AUTH_TYPE.HTTP_QUERY_STRING },
+  { label: 'Http Header', value: '1' },
+  { label: 'Webhook Key', value: '2' },
+  { label: 'Http Query String', value: '3' },
 ];
 
 /* Service Bus auth options: SASKey, SASToken */
-const SERVICE_BUS_AUTH_OPTIONS: { label: string; value: string | number }[] = [
+const SERVICE_BUS_AUTH_OPTIONS: { label: string; value: string }[] = [
   { label: 'None', value: '' },
-  { label: 'SAS Key', value: AUTH_TYPE.SAS_KEY },
-  { label: 'SAS Token', value: AUTH_TYPE.SAS_TOKEN },
+  { label: 'SAS Key', value: '2' },
+  { label: 'SAS Token', value: '3' },
 ];
 
 const MESSAGE_FORMAT_OPTIONS = Object.entries(MESSAGE_FORMAT_LABELS).map(
@@ -67,46 +68,80 @@ export function ServiceEndpointFormDialog({
   variant,
   endpointId,
   initialData,
+  templateData,
   onClose,
 }: Props) {
   const isWebhook = variant === 'webhook';
   const createMutation = useCreateServiceEndpoint();
   const updateMutation = useUpdateServiceEndpoint();
 
+  // When copying (templateData), add " (Copy)" to name, otherwise use initialData or empty
   const [name, setName] = useState(
-    mode === 'edit' ? String(initialData?.name ?? '') : '',
+    mode === 'edit'
+      ? String(initialData?.name ?? '')
+      : templateData
+        ? `${String(templateData.name ?? '')} (Copy)`
+        : '',
   );
   const [contract, setContract] = useState(
     mode === 'edit'
       ? Number(initialData?.contract ?? (isWebhook ? CONTRACT_TYPE.WEBHOOK : 1))
-      : isWebhook
-        ? CONTRACT_TYPE.WEBHOOK
-        : 1,
+      : templateData
+        ? Number(templateData.contract ?? (isWebhook ? CONTRACT_TYPE.WEBHOOK : 1))
+        : isWebhook
+          ? CONTRACT_TYPE.WEBHOOK
+          : 1,
   );
   const [url, setUrl] = useState(
-    mode === 'edit' ? String(initialData?.url ?? '') : '',
+    mode === 'edit'
+      ? String(initialData?.url ?? '')
+      : templateData
+        ? String(templateData.url ?? '')
+        : '',
   );
   const [authtype, setAuthtype] = useState<string>(
-    mode === 'edit' && initialData?.authtype != null
-      ? String(initialData.authtype)
-      : '',
+    mode === 'edit'
+      ? initialData?.authtype != null
+        ? String(initialData.authtype)
+        : ''
+      : templateData?.authtype != null
+        ? String(templateData.authtype)
+        : '',
   );
   const [authvalue, setAuthvalue] = useState(
-    mode === 'edit' ? String(initialData?.authvalue ?? '') : '',
+    mode === 'edit'
+      ? String(initialData?.authvalue ?? '')
+      : templateData
+        ? String(templateData.authvalue ?? '')
+        : '',
   );
   const [messageformat, setMessageformat] = useState(
     mode === 'edit'
       ? Number(initialData?.messageformat ?? MESSAGE_FORMAT.JSON)
-      : MESSAGE_FORMAT.JSON,
+      : templateData
+        ? Number(templateData.messageformat ?? MESSAGE_FORMAT.JSON)
+        : MESSAGE_FORMAT.JSON,
   );
   const [description, setDescription] = useState(
-    mode === 'edit' ? String(initialData?.description ?? '') : '',
+    mode === 'edit'
+      ? String(initialData?.description ?? '')
+      : templateData
+        ? String(templateData.description ?? '')
+        : '',
   );
   const [namespaceaddress, setNamespaceaddress] = useState(
-    mode === 'edit' ? String(initialData?.namespaceaddress ?? '') : '',
+    mode === 'edit'
+      ? String(initialData?.namespaceaddress ?? '')
+      : templateData
+        ? String(templateData.namespaceaddress ?? '')
+        : '',
   );
   const [path, setPath] = useState(
-    mode === 'edit' ? String(initialData?.path ?? '') : '',
+    mode === 'edit'
+      ? String(initialData?.path ?? '')
+      : templateData
+        ? String(templateData.path ?? '')
+        : '',
   );
   const [saskeyname, setSaskeyname] = useState(
     mode === 'edit' ? String(initialData?.saskeyname ?? '') : '',
@@ -118,7 +153,11 @@ export function ServiceEndpointFormDialog({
     mode === 'edit' ? String(initialData?.sastoken ?? '') : '',
   );
   const [userclaim, setUserclaim] = useState(
-    mode === 'edit' ? Number(initialData?.userclaim ?? 0) : 0,
+    mode === 'edit'
+      ? Number(initialData?.userclaim ?? 0)
+      : templateData
+        ? Number(templateData.userclaim ?? 0)
+        : 0,
   );
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
@@ -131,8 +170,10 @@ export function ServiceEndpointFormDialog({
     ([1, 2, 4, 5, 6, 7] as number[]).includes(contract);
 
   const authtypeNum = authtype ? Number(authtype) : null;
-  const showSasKeyFields = showServiceBusFields && authtypeNum === AUTH_TYPE.SAS_KEY;
-  const showSasTokenField = showServiceBusFields && authtypeNum === AUTH_TYPE.SAS_TOKEN;
+  // For Service Bus: 2=SAS Key, 3=SAS Token
+  // For Webhook: 1=HTTP Header, 2=Webhook Key, 3=HTTP Query String
+  const showSasKeyFields = showServiceBusFields && authtypeNum === 2;
+  const showSasTokenField = showServiceBusFields && authtypeNum === 3;
 
   // Dynamic label for path based on contract type
   const pathLabel =

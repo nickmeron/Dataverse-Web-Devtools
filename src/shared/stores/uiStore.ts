@@ -18,9 +18,9 @@ export type DialogType =
   | { type: 'updateAssembly'; assemblyId: string; assemblyName: string }
   | { type: 'registerImage'; stepId: string }
   | { type: 'editImage'; imageId: string; data: Record<string, unknown> }
-  | { type: 'registerWebhook' }
+  | { type: 'registerWebhook'; templateData?: Record<string, unknown> }
   | { type: 'editWebhook'; endpointId: string; data: Record<string, unknown> }
-  | { type: 'registerServiceEndpoint' }
+  | { type: 'registerServiceEndpoint'; templateData?: Record<string, unknown> }
   | { type: 'editServiceEndpoint'; endpointId: string; data: Record<string, unknown> }
   | { type: 'sessionDetails' }
   | {
@@ -111,7 +111,7 @@ export const useUiStore = create<UiState>()(
       sidebarCollapsed: false,
       setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
 
-      theme: 'dark',
+      theme: 'light',
       toggleTheme: () =>
         set((state) => ({
           theme: state.theme === 'dark' ? 'light' : 'dark',
