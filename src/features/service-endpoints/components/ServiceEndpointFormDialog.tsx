@@ -14,7 +14,6 @@ import {
 import {
   CONTRACT_TYPE,
   CONTRACT_TYPE_LABELS,
-  AUTH_TYPE,
   MESSAGE_FORMAT,
   MESSAGE_FORMAT_LABELS,
   USER_CLAIM_LABELS,
@@ -50,8 +49,8 @@ const WEBHOOK_AUTH_OPTIONS: { label: string; value: string }[] = [
 /* Service Bus auth options: SASKey, SASToken */
 const SERVICE_BUS_AUTH_OPTIONS: { label: string; value: string }[] = [
   { label: 'None', value: '' },
-  { label: 'SAS Key', value: '1' },
-  { label: 'SAS Token', value: '2' },
+  { label: 'SAS Key', value: '2' },
+  { label: 'SAS Token', value: '3' },
 ];
 
 const MESSAGE_FORMAT_OPTIONS = Object.entries(MESSAGE_FORMAT_LABELS).map(
@@ -131,8 +130,10 @@ export function ServiceEndpointFormDialog({
     ([1, 2, 4, 5, 6, 7] as number[]).includes(contract);
 
   const authtypeNum = authtype ? Number(authtype) : null;
-  const showSasKeyFields = showServiceBusFields && authtypeNum === AUTH_TYPE.SAS_KEY;
-  const showSasTokenField = showServiceBusFields && authtypeNum === AUTH_TYPE.SAS_TOKEN;
+  // For Service Bus: 2=SAS Key, 3=SAS Token
+  // For Webhook: 1=HTTP Header, 2=Webhook Key, 3=HTTP Query String
+  const showSasKeyFields = showServiceBusFields && authtypeNum === 2;
+  const showSasTokenField = showServiceBusFields && authtypeNum === 3;
 
   // Dynamic label for path based on contract type
   const pathLabel =
