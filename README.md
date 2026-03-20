@@ -96,8 +96,11 @@ The easiest way to get started — no build tools needed.
 1. Download the latest managed solution from [Releases](https://github.com/nickmeron/Dataverse-Web-Devtools/releases)
 2. Go to your Power Platform environment → **Settings** → **Solutions**
 3. Click **Import** and select the downloaded `.zip` file
-4. After import, the DevTools web resource will be available in your environment
-5. Navigate to your Environment Settings model-driven app to access it
+4. After import, open the tool by navigating to:
+   ```
+   https://<your-org>.crm.dynamics.com/WebResources/nirmeron_/devtools/devtools.html
+   ```
+   Replace `<your-org>` with your environment URL. Bookmark it for quick access.
 
 ### Option 2: Build from Source
 
@@ -129,18 +132,17 @@ The `dist/` folder will contain three files to upload as Dataverse web resources
 
 ```
 Browser (Dynamics 365 / Power Platform)
-  └── Model-Driven App (Environment Settings)
-        └── Web Resource (index.html)
-              ├── Same-origin session auth via ClientGlobalContext.js.aspx
-              ├── Dataverse Web API (OData v4) — /api/data/v9.2/
-              │     ├── pluginassemblies
-              │     ├── plugintypes
-              │     ├── sdkmessageprocessingsteps
-              │     ├── sdkmessageprocessingstepimages
-              │     ├── serviceendpoints
-              │     ├── plugintracelogs
-              │     └── organizations
-              └── No external APIs or app registrations
+  └── Web Resource (devtools.html)
+        ├── Same-origin session auth via ClientGlobalContext.js.aspx
+        ├── Dataverse Web API (OData v4) — /api/data/v9.2/
+        │     ├── pluginassemblies
+        │     ├── plugintypes
+        │     ├── sdkmessageprocessingsteps
+        │     ├── sdkmessageprocessingstepimages
+        │     ├── serviceendpoints
+        │     ├── plugintracelogs
+        │     └── organizations
+        └── No external APIs or app registrations
 ```
 
 **Key design decisions:**
