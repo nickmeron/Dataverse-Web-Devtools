@@ -96,11 +96,17 @@ The easiest way to get started — no build tools needed.
 1. Download the latest managed solution from [Releases](https://github.com/nickmeron/Dataverse-Web-Devtools/releases)
 2. Go to your Power Platform environment → **Settings** → **Solutions**
 3. Click **Import** and select the downloaded `.zip` file
-4. After import, open the tool by navigating to:
+4. After import, access the tool using one of these methods:
+
+   **Direct URL** — open in your browser:
    ```
    https://<your-org>.crm.dynamics.com/WebResources/nirmeron_/devtools/devtools.html
    ```
-   Replace `<your-org>` with your environment URL. Bookmark it for quick access.
+
+   **Embed in a Model-Driven App (recommended)** — for the best experience, add the web resource to your app's sitemap or embed it as an iframe in any model-driven app page:
+   ```html
+   <iframe src="/WebResources/nirmeron_/devtools/devtools.html" style="width:100%;height:100%;border:none;"></iframe>
+   ``` 2a34184 (Remove release folder from repo, add iframe embedding docs)
 
 ### Option 2: Build from Source
 
