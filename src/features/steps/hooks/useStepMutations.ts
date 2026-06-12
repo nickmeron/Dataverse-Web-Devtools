@@ -3,6 +3,10 @@ import { dataverseClient } from '@/shared/api/dataverseClient';
 import { endpoints } from '@/shared/api/endpoints';
 import { queryKeys } from '@/shared/api/queryKeys';
 import { useUiStore } from '@/shared/stores/uiStore';
+import type {
+  SdkMessageProcessingStep,
+  SdkMessageProcessingStepImage,
+} from '@/shared/types/dataverse';
 import toast from 'react-hot-toast';
 
 interface CreateStepPayload {
@@ -88,25 +92,25 @@ export function useDeleteStep() {
       toast.success('Step deleted');
 
       // Immediately remove the deleted step from the cache for instant UI update
-      qc.setQueryData(queryKeys.steps.all, (oldData: any) => {
+      qc.setQueryData<SdkMessageProcessingStep[]>(queryKeys.steps.all, (oldData) => {
         if (!oldData) return oldData;
         return oldData.filter(
-          (step: any) => step.sdkmessageprocessingstepid !== stepId,
+          (step) => step.sdkmessageprocessingstepid !== stepId,
         );
       });
 
-      qc.setQueryData(queryKeys.webhooks.all, (oldData: any) => {
+      qc.setQueryData<SdkMessageProcessingStep[]>(queryKeys.webhooks.all, (oldData) => {
         if (!oldData) return oldData;
         return oldData.filter(
-          (step: any) => step.sdkmessageprocessingstepid !== stepId,
+          (step) => step.sdkmessageprocessingstepid !== stepId,
         );
       });
 
       // Also remove associated step images immediately
-      qc.setQueryData(['stepImages'], (oldData: any) => {
+      qc.setQueryData<SdkMessageProcessingStepImage[]>(['stepImages'], (oldData) => {
         if (!oldData) return oldData;
         return oldData.filter(
-          (img: any) => img._sdkmessageprocessingstepid_value !== stepId,
+          (img) => img._sdkmessageprocessingstepid_value !== stepId,
         );
       });
 

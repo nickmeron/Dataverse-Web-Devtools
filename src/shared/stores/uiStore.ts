@@ -15,7 +15,13 @@ export type DialogType =
   | { type: 'registerStep'; pluginTypeId?: string; eventHandlerId?: string; eventHandlerName?: string }
   | { type: 'editStep'; stepId: string; data: Record<string, unknown> }
   | { type: 'uploadAssembly' }
-  | { type: 'updateAssembly'; assemblyId: string; assemblyName: string }
+  | {
+      type: 'updateAssembly';
+      assemblyId: string;
+      assemblyName: string;
+      data?: Record<string, unknown>;
+    }
+  | { type: 'editPluginType'; typeId: string; data: Record<string, unknown> }
   | { type: 'registerImage'; stepId: string }
   | { type: 'editImage'; imageId: string; data: Record<string, unknown> }
   | { type: 'registerWebhook'; templateData?: Record<string, unknown> }

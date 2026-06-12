@@ -3,6 +3,7 @@ import { Dialog, DialogFooter } from './Dialog';
 import { StepFormDialog } from '@/features/steps/components/StepFormDialog';
 import { AssemblyUploadDialog } from '@/features/assemblies/components/AssemblyUploadDialog';
 import { AssemblyUpdateDialog } from '@/features/assemblies/components/AssemblyUpdateDialog';
+import { PluginTypeEditDialog } from '@/features/plugin-types/components/PluginTypeEditDialog';
 import { ImageFormDialog } from '@/features/images/components/ImageFormDialog';
 import { ServiceEndpointFormDialog } from '@/features/service-endpoints/components/ServiceEndpointFormDialog';
 import { SessionDetailsDialog } from './SessionDetailsDialog';
@@ -47,6 +48,16 @@ export function Dialogs() {
         <AssemblyUpdateDialog
           assemblyId={activeDialog.assemblyId}
           assemblyName={activeDialog.assemblyName}
+          initialData={activeDialog.data}
+          onClose={closeDialog}
+        />
+      );
+
+    case 'editPluginType':
+      return (
+        <PluginTypeEditDialog
+          typeId={activeDialog.typeId}
+          initialData={activeDialog.data}
           onClose={closeDialog}
         />
       );

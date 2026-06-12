@@ -21,6 +21,7 @@ export const endpoints = {
   // Plugin Types
   pluginTypes: {
     list: `${BASE}/plugintypes`,
+    detail: (id: string) => `${BASE}/plugintypes(${id})`,
     byAssembly: (assemblyId: string) =>
       `${BASE}/plugintypes?$filter=_pluginassemblyid_value eq ${assemblyId}&$select=plugintypeid,typename,friendlyname,name,assemblyname,isworkflowactivity,workflowactivitygroupname,description,_pluginassemblyid_value`,
   },

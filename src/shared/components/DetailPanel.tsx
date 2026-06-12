@@ -2,6 +2,7 @@ import { useUiStore } from '@/shared/stores/uiStore';
 import { useTreeData } from '@/features/tree-view/hooks/useTreeData';
 import { useToggleStep, useDeleteStep } from '@/features/steps/hooks/useStepMutations';
 import { useDeleteAssembly } from '@/features/assemblies/hooks/useAssemblyMutations';
+import { useDeletePluginType } from '@/features/plugin-types/hooks/usePluginTypeMutations';
 import { useDeleteImage } from '@/features/images/hooks/useImageMutations';
 import { useDeleteServiceEndpoint } from '@/features/service-endpoints/hooks/useServiceEndpointMutations';
 import { useTraceLogStore } from '@/features/trace-logs/stores/traceLogStore';
@@ -77,6 +78,7 @@ function NodeDetail({ node }: { node: TreeNode }) {
   const toggleStep = useToggleStep();
   const deleteStep = useDeleteStep();
   const deleteAssembly = useDeleteAssembly();
+  const deletePluginType = useDeletePluginType();
   const deleteImage = useDeleteImage();
   const deleteEndpoint = useDeleteServiceEndpoint();
 
@@ -201,6 +203,7 @@ function NodeDetail({ node }: { node: TreeNode }) {
                   type: 'updateAssembly',
                   assemblyId: node.id,
                   assemblyName: node.label,
+                  data,
                 })
               }
             />
@@ -231,16 +234,40 @@ function NodeDetail({ node }: { node: TreeNode }) {
 
         {/* Plugin Type actions */}
         {node.type === 'type' && (
-          <ActionButton
-            icon={<Plus className="h-3.5 w-3.5" />}
-            label="Register Step"
-            onClick={() =>
-              openDialog({
-                type: 'registerStep',
-                pluginTypeId: node.id,
-              })
-            }
-          />
+          <>
+            <ActionButton
+              icon={<Plus className="h-3.5 w-3.5" />}
+              label="Register Step"
+              onClick={() =>
+                openDialog({
+                  type: 'registerStep',
+                  pluginTypeId: node.id,
+                })
+              }
+            />
+            <ActionButton
+              icon={<Pencil className="h-3.5 w-3.5" />}
+              label="Edit"
+              onClick={() =>
+                openDialog({ type: 'editPluginType', typeId: node.id, data })
+              }
+            />
+            <ActionButton
+              icon={<Trash2 className="h-3.5 w-3.5" />}
+              label="Unregister"
+              variant="danger"
+              isLoading={deletePluginType.isPending}
+              onClick={() =>
+                openDialog({
+                  type: 'confirm',
+                  title: 'Unregister Plugin Type',
+                  message: `Are you sure you want to unregister "${node.label}"? Steps registered on this type must be removed first.`,
+                  onConfirm: () => deletePluginType.mutate(node.id),
+                  variant: 'danger',
+                })
+              }
+            />
+          </>
         )}
 
         {/* Image actions */}
