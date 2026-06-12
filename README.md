@@ -74,19 +74,16 @@ The official Plugin Registration Tool is a Windows-only desktop app that require
 
 ## Screenshots
 
-![Main](docs/screenshots/main-image.png)
+![Main](docs/screenshots/main-image.png?v=3)
 
-### Registrations Tree
-![Registrations Tree](docs/screenshots/registrations-tree.png?v=2)
+### Registrations Tree & Step Detail
+![Registrations Tree](docs/screenshots/registrations-tree.png?v=3)
+
+### Update Assembly — replace the binary and edit properties
+![Update Assembly](docs/screenshots/update-assembly.png?v=3)
 
 ### Edit Step Dialog
-![Edit Step](docs/screenshots/edit-step.png?v=2)
-
-### Service Endpoint Registration
-![Service Endpoint Form](docs/screenshots/service-endpoint-form.png?v=2)
-
-### Trace Log Viewer & Monitoring Dashboard
-![Trace Logs](docs/screenshots/trace-logs.png?v=2)
+![Edit Step](docs/screenshots/edit-step.png?v=3)
 
 ## Getting Started
 
@@ -107,7 +104,7 @@ The easiest way to get started — no build tools needed.
    **Embed in a Model-Driven App (recommended)** — for the best experience, add the web resource to your app's sitemap or embed it as an iframe in any model-driven app page:
    ```html
    <iframe src="/WebResources/nirmeron_/devtools/devtools.html" style="width:100%;height:100%;border:none;"></iframe>
-   ``` 2a34184 (Remove release folder from repo, add iframe embedding docs)
+   ```
 
 ### Option 2: Build from Source
 
