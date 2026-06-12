@@ -2,6 +2,7 @@ import { useUiStore } from '@/shared/stores/uiStore';
 import { useTreeData } from '@/features/tree-view/hooks/useTreeData';
 import { useToggleStep, useDeleteStep } from '@/features/steps/hooks/useStepMutations';
 import { useDeleteAssembly } from '@/features/assemblies/hooks/useAssemblyMutations';
+import { useDeletePluginType } from '@/features/plugin-types/hooks/usePluginTypeMutations';
 import { useDeleteImage } from '@/features/images/hooks/useImageMutations';
 import { useDeleteServiceEndpoint } from '@/features/service-endpoints/hooks/useServiceEndpointMutations';
 import { useTraceLogStore } from '@/features/trace-logs/stores/traceLogStore';
@@ -77,6 +78,7 @@ function NodeDetail({ node }: { node: TreeNode }) {
   const toggleStep = useToggleStep();
   const deleteStep = useDeleteStep();
   const deleteAssembly = useDeleteAssembly();
+  const deletePluginType = useDeletePluginType();
   const deleteImage = useDeleteImage();
   const deleteEndpoint = useDeleteServiceEndpoint();
 
@@ -99,8 +101,8 @@ function NodeDetail({ node }: { node: TreeNode }) {
       />
     ),
     image: <Image className="h-5 w-5 text-surface-400" />,
-    webhook: <Globe className="h-5 w-5 text-blue-400" />,
-    serviceEndpoint: <Cloud className="h-5 w-5 text-purple-400" />,
+    webhook: <Globe className="h-5 w-5 text-accent" />,
+    serviceEndpoint: <Cloud className="h-5 w-5 text-surface-400" />,
   }[node.type];
 
   return (
@@ -201,6 +203,7 @@ function NodeDetail({ node }: { node: TreeNode }) {
                   type: 'updateAssembly',
                   assemblyId: node.id,
                   assemblyName: node.label,
+                  data,
                 })
               }
             />
@@ -231,16 +234,40 @@ function NodeDetail({ node }: { node: TreeNode }) {
 
         {/* Plugin Type actions */}
         {node.type === 'type' && (
-          <ActionButton
-            icon={<Plus className="h-3.5 w-3.5" />}
-            label="Register Step"
-            onClick={() =>
-              openDialog({
-                type: 'registerStep',
-                pluginTypeId: node.id,
-              })
-            }
-          />
+          <>
+            <ActionButton
+              icon={<Plus className="h-3.5 w-3.5" />}
+              label="Register Step"
+              onClick={() =>
+                openDialog({
+                  type: 'registerStep',
+                  pluginTypeId: node.id,
+                })
+              }
+            />
+            <ActionButton
+              icon={<Pencil className="h-3.5 w-3.5" />}
+              label="Edit"
+              onClick={() =>
+                openDialog({ type: 'editPluginType', typeId: node.id, data })
+              }
+            />
+            <ActionButton
+              icon={<Trash2 className="h-3.5 w-3.5" />}
+              label="Unregister"
+              variant="danger"
+              isLoading={deletePluginType.isPending}
+              onClick={() =>
+                openDialog({
+                  type: 'confirm',
+                  title: 'Unregister Plugin Type',
+                  message: `Are you sure you want to unregister "${node.label}"? Steps registered on this type must be removed first.`,
+                  onConfirm: () => deletePluginType.mutate(node.id),
+                  variant: 'danger',
+                })
+              }
+            />
+          </>
         )}
 
         {/* Image actions */}
@@ -326,13 +353,13 @@ function NodeDetail({ node }: { node: TreeNode }) {
       </div>
 
       {/* Properties */}
-      <div className="rounded-lg border border-surface-700/50 bg-surface-800/30">
-        <div className="border-b border-surface-700/50 px-4 py-2.5">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-surface-400">
+      <div className="rounded-(--radius-card) bg-surface-800 px-2">
+        <div className="border-b border-surface-700/60 px-4 py-3">
+          <h3 className="text-sm font-semibold text-surface-100">
             Properties
           </h3>
         </div>
-        <div className="divide-y divide-surface-700/30">
+        <div className="divide-y divide-surface-700/60">
           {node.type === 'assembly' && (
             <>
               <PropRow label="Name" value={str(data.name)} />
@@ -490,12 +517,12 @@ function ActionButton({
     <button
       onClick={onClick}
       disabled={isLoading}
-      className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
         isLoading
           ? 'cursor-not-allowed opacity-60'
           : variant === 'danger'
-            ? 'text-danger hover:bg-danger/10'
-            : 'text-surface-300 hover:bg-surface-700'
+            ? 'bg-danger/10 text-danger hover:bg-danger/15'
+            : 'bg-surface-800 text-surface-200 hover:bg-surface-700'
       }`}
     >
       {isLoading ? (
@@ -519,12 +546,12 @@ function PropRow({
 }) {
   if (!value) return null;
   return (
-    <div className="flex gap-4 px-4 py-2.5">
-      <dt className="w-40 shrink-0 text-xs font-medium text-surface-400">
+    <div className="flex gap-4 px-4 py-3">
+      <dt className="w-40 shrink-0 text-xs font-semibold text-surface-200">
         {label}
       </dt>
       <dd
-        className={`min-w-0 flex-1 text-sm text-surface-200 break-words ${mono ? 'font-mono text-xs bg-surface-900/50 rounded px-2 py-1' : ''}`}
+        className={`min-w-0 flex-1 text-sm text-surface-400 break-words ${mono ? 'font-mono text-xs bg-surface-900/60 rounded-lg px-2 py-1' : ''}`}
       >
         {value}
       </dd>

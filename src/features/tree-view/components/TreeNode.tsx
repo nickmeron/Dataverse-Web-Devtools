@@ -75,9 +75,9 @@ export const TreeNodeComponent = memo(function TreeNodeComponent({
                 ? 'text-surface-500'
                 : 'text-success'
               : node.type === 'webhook'
-                ? 'text-blue-400'
+                ? 'text-accent'
                 : node.type === 'serviceEndpoint'
-                  ? 'text-purple-400'
+                  ? 'text-surface-400'
                   : 'text-surface-400'
           }`}
         />

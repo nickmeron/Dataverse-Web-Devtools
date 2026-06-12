@@ -27,11 +27,19 @@ export function useUploadAssembly() {
   });
 }
 
+interface UpdateAssemblyPayload {
+  /** base64 DLL bytes — only sent when replacing the binary */
+  content?: string;
+  isolationmode?: number;
+  sourcetype?: number;
+  description?: string | null;
+}
+
 export function useUpdateAssembly() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, content }: { id: string; content: string }) =>
-      dataverseClient.patch(endpoints.assemblies.detail(id), { content }),
+    mutationFn: ({ id, payload }: { id: string; payload: UpdateAssemblyPayload }) =>
+      dataverseClient.patch(endpoints.assemblies.detail(id), payload),
     onSuccess: () => {
       toast.success('Assembly updated successfully');
       qc.invalidateQueries({ queryKey: queryKeys.assemblies.all });

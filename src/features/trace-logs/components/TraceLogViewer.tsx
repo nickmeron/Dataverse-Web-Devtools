@@ -144,7 +144,7 @@ export function TraceLogViewer() {
                 <button
                   onClick={goPrevPage}
                   disabled={pageIndex === 0}
-                  className="rounded p-1 text-surface-400 transition-colors hover:bg-surface-700 disabled:opacity-30"
+                  className="rounded-full p-1 text-surface-400 transition-colors hover:bg-surface-700 disabled:opacity-30"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
@@ -154,7 +154,7 @@ export function TraceLogViewer() {
                 <button
                   onClick={goNextPage}
                   disabled={!data?.nextLink}
-                  className="rounded p-1 text-surface-400 transition-colors hover:bg-surface-700 disabled:opacity-30"
+                  className="rounded-full p-1 text-surface-400 transition-colors hover:bg-surface-700 disabled:opacity-30"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
@@ -215,7 +215,7 @@ function TraceSettingBanner() {
               })
             }
             disabled={updateSetting.isPending}
-            className={`rounded px-2.5 py-1 text-[11px] font-medium transition-colors ${
+            className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors ${
               settings.plugintracelogsetting === Number(val)
                 ? 'bg-accent text-white'
                 : 'text-surface-400 hover:bg-surface-700 hover:text-surface-200'
@@ -253,16 +253,16 @@ function FilterBar({
   return (
     <div className="flex flex-wrap items-center gap-2 border-b border-surface-700/50 bg-surface-800/30 px-4 py-2">
       {/* Date presets */}
-      <div className="flex items-center gap-0.5 rounded-md border border-surface-700/50 bg-surface-900/50 p-0.5">
+      <div className="flex items-center rounded-full bg-surface-700/60 p-0.5">
         {(Object.entries(DATE_PRESET_LABELS) as [DatePreset, string][]).map(
           ([preset, label]) => (
             <button
               key={preset}
               onClick={() => setFilters({ datePreset: preset })}
-              className={`rounded px-2 py-1 text-[11px] font-medium transition-colors ${
+              className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors ${
                 filters.datePreset === preset
-                  ? 'bg-surface-700 text-surface-100'
-                  : 'text-surface-500 hover:text-surface-300'
+                  ? 'bg-surface-900 text-surface-100 shadow-sm'
+                  : 'text-surface-400 hover:text-surface-200'
               }`}
             >
               {label}
@@ -296,7 +296,7 @@ function FilterBar({
             mode: e.target.value === '' ? null : Number(e.target.value),
           })
         }
-        className="rounded-md border border-surface-700/50 bg-surface-900/50 px-2 py-1 text-[11px] text-surface-300 outline-none"
+        className="rounded-full border border-surface-600 bg-surface-900 px-2.5 py-1 text-[11px] text-surface-300 outline-none transition-colors focus:border-accent"
       >
         <option value="">All Modes</option>
         <option value="0">Sync</option>
@@ -343,14 +343,14 @@ function FilterInput({
   placeholder: string;
 }) {
   return (
-    <div className="flex items-center gap-1 rounded-md border border-surface-700/50 bg-surface-900/50 px-2 py-1">
-      <Search className="h-3 w-3 text-surface-600" />
+    <div className="flex items-center gap-1 rounded-full bg-surface-700/60 px-2.5 py-1">
+      <Search className="h-3 w-3 text-surface-500" />
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-20 bg-transparent text-[11px] text-surface-200 placeholder:text-surface-600 outline-none"
+        className="w-20 bg-transparent text-[11px] text-surface-200 placeholder:text-surface-500 outline-none"
       />
       {value && (
         <button onClick={() => onChange('')} className="text-surface-500">
