@@ -18,7 +18,8 @@ The official Plugin Registration Tool is a Windows-only desktop app that require
 ### Plugin & Assembly Management
 - Browse all registered plugin assemblies, plugin types, and steps
 - Upload new assemblies (`.dll` files parsed in-browser)
-- Update existing assemblies with new versions
+- Update existing assemblies — replace the binary, edit isolation mode, source type, and description, or both in one go
+- Edit plugin types (friendly name, description) and unregister them
 - View assembly metadata: version, isolation mode, source type, public key token
 
 ### Step Registration & Configuration

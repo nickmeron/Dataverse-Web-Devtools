@@ -23,9 +23,9 @@ export function Dialog({
   return (
     <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
       <RadixDialog.Portal>
-        <RadixDialog.Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <RadixDialog.Overlay className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <RadixDialog.Content
-          className={`fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-surface-700 bg-surface-800 shadow-2xl ${maxWidth}`}
+          className={`fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-(--radius-card) bg-elevated shadow-[0_12px_40px_rgba(0,0,0,0.24)] ${maxWidth}`}
         >
           {/* Header */}
           <div className="flex items-center justify-between border-b border-surface-700/50 px-6 py-4">
@@ -39,7 +39,7 @@ export function Dialog({
                 </RadixDialog.Description>
               )}
             </div>
-            <RadixDialog.Close className="rounded-md p-1 text-surface-400 transition-colors hover:bg-surface-700 hover:text-surface-200">
+            <RadixDialog.Close className="rounded-full p-1 text-surface-400 transition-colors hover:bg-surface-700 hover:text-surface-200">
               <X className="h-4 w-4" />
             </RadixDialog.Close>
           </div>
@@ -79,7 +79,7 @@ export function DialogFooter({
         type="button"
         onClick={onCancel}
         disabled={isSubmitting}
-        className="rounded-md px-3 py-1.5 text-sm font-medium text-surface-300 transition-colors hover:bg-surface-700 disabled:opacity-50"
+        className="rounded-full px-4 py-1.5 text-sm font-medium text-surface-300 transition-colors hover:bg-surface-700 disabled:opacity-50"
       >
         Cancel
       </button>
@@ -87,7 +87,7 @@ export function DialogFooter({
         type="button"
         onClick={onSubmit}
         disabled={isSubmitting}
-        className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${submitClass}`}
+        className={`rounded-full px-5 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${submitClass}`}
       >
         {isSubmitting ? 'Saving...' : submitLabel}
       </button>
@@ -145,7 +145,7 @@ export function FormInput({
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       disabled={disabled}
-      className="w-full rounded-md border border-surface-700 bg-surface-900 px-3 py-1.5 text-sm text-surface-200 placeholder:text-surface-500 outline-none transition-colors focus:border-accent disabled:opacity-50"
+      className="w-full rounded-(--radius-input) border border-surface-600 bg-surface-900 px-3 py-1.5 text-sm text-surface-200 placeholder:text-surface-500 outline-none transition-colors focus:border-accent disabled:opacity-50"
     />
   );
 }
@@ -170,7 +170,7 @@ export function FormTextarea({
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       rows={rows}
-      className={`w-full rounded-md border border-surface-700 bg-surface-900 px-3 py-1.5 text-sm text-surface-200 placeholder:text-surface-500 outline-none transition-colors focus:border-accent resize-y ${mono ? 'font-mono text-xs' : ''}`}
+      className={`w-full rounded-(--radius-input) border border-surface-600 bg-surface-900 px-3 py-1.5 text-sm text-surface-200 placeholder:text-surface-500 outline-none transition-colors focus:border-accent resize-y ${mono ? 'font-mono text-xs' : ''}`}
     />
   );
 }
@@ -194,7 +194,7 @@ export function FormSelect({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className="w-full rounded-md border border-surface-700 bg-surface-900 px-3 py-1.5 text-sm text-surface-200 outline-none transition-colors focus:border-accent disabled:opacity-50"
+      className="w-full rounded-(--radius-input) border border-surface-600 bg-surface-900 px-3 py-1.5 text-sm text-surface-200 outline-none transition-colors focus:border-accent disabled:opacity-50"
     >
       {placeholder && (
         <option value="" disabled>

@@ -472,7 +472,7 @@ export function StepFormDialog({
         {isEndpointStep && (
           <FormField label="Event Handler">
             <div className="flex items-center gap-2 rounded-md border border-surface-700 bg-surface-900/50 px-3 py-2">
-              <Globe className="h-4 w-4 text-blue-400" />
+              <Globe className="h-4 w-4 text-accent" />
               <span className="text-sm text-surface-200">
                 {eventHandlerName ?? 'Service Endpoint'}
               </span>

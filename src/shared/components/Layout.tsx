@@ -31,7 +31,7 @@ export function AppLayout() {
           </div>
         )}
       </div>
-      <div className="flex h-6 shrink-0 items-center justify-end border-t border-surface-700/50 bg-surface-800/60 px-3">
+      <div className="frosted flex h-6 shrink-0 items-center justify-end border-t border-surface-700/60 px-3">
         <span className="text-[10px] text-surface-500">
           Built by Nir Meron
         </span>

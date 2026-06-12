@@ -11,15 +11,17 @@ const COLORS = {
   muted: 'color-mix(in srgb, var(--color-surface-500) 60%, transparent)',
 };
 
+// Monochromatic blue ramp — data viz stays grayscale + the one accent;
+// red/orange are reserved for flagging errors and warnings
 const BAR_PALETTE = [
   'var(--color-accent)',
-  '#6366f1', // indigo
-  '#8b5cf6', // violet
-  '#ec4899', // pink
-  '#f59e0b', // amber
-  '#10b981', // emerald
-  '#06b6d4', // cyan
-  '#f43f5e', // rose
+  'color-mix(in srgb, var(--color-accent) 85%, transparent)',
+  'color-mix(in srgb, var(--color-accent) 72%, transparent)',
+  'color-mix(in srgb, var(--color-accent) 60%, transparent)',
+  'color-mix(in srgb, var(--color-accent) 50%, transparent)',
+  'color-mix(in srgb, var(--color-accent) 41%, transparent)',
+  'color-mix(in srgb, var(--color-accent) 33%, transparent)',
+  'color-mix(in srgb, var(--color-accent) 26%, transparent)',
 ];
 
 // ─── Helper: extract short class name from assembly-qualified typename ──────
@@ -324,7 +326,7 @@ function StatCard({
     <div className="flex items-center gap-3 bg-surface-900/60 px-4 py-3">
       <div className={`${color} opacity-60`}>{icon}</div>
       <div className="min-w-0">
-        <p className="text-[10px] font-medium uppercase tracking-wider text-surface-500">
+        <p className="text-[11px] font-medium text-surface-500">
           {label}
         </p>
         <p className={`text-lg font-bold tabular-nums ${color}`}>{value}</p>
@@ -338,7 +340,7 @@ function StatCard({
 
 function ChartTitle({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-surface-500">
+    <p className="mb-2 text-[11px] font-semibold text-surface-500">
       {children}
     </p>
   );
@@ -365,13 +367,13 @@ function DonutChart({
 
   const successTip = (
     <span className="text-[10px] tabular-nums text-surface-200">
-      <span className="font-semibold text-green-400">Success:</span>{' '}
+      <span className="font-semibold text-success">Success:</span>{' '}
       {success} ({(successPct * 100).toFixed(1)}%)
     </span>
   );
   const errorTip = (
     <span className="text-[10px] tabular-nums text-surface-200">
-      <span className="font-semibold text-red-400">Errors:</span> {errors} (
+      <span className="font-semibold text-danger">Errors:</span> {errors} (
       {(errorPct * 100).toFixed(1)}%)
     </span>
   );
@@ -537,7 +539,7 @@ function TopPluginsChart({
             <span>
               {p.count} execution{p.count !== 1 ? 's' : ''}
               {p.errors > 0 && (
-                <span className="text-red-400">
+                <span className="text-danger">
                   {' '}
                   · {p.errors} error{p.errors !== 1 ? 's' : ''} ({errorRate}%)
                 </span>
@@ -714,7 +716,7 @@ function TimelineChart({
                   <span>
                     {p.count} log{p.count !== 1 ? 's' : ''}
                     {p.errors > 0 && (
-                      <span className="text-red-400">
+                      <span className="text-danger">
                         {' '}
                         · {p.errors} error{p.errors !== 1 ? 's' : ''}
                       </span>

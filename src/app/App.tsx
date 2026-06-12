@@ -22,23 +22,25 @@ export function App() {
         position="top-right"
         toastOptions={{
           style: {
-            background: isDark ? '#1e293b' : '#ffffff',
-            color: isDark ? '#e2e8f0' : '#1e293b',
+            background: isDark ? '#1d1d1f' : '#ffffff',
+            color: isDark ? '#f5f5f7' : '#1d1d1f',
             border: isDark
-              ? '1px solid rgba(51, 65, 85, 0.5)'
-              : '1px solid rgba(226, 232, 240, 0.8)',
+              ? '1px solid rgba(66, 66, 69, 0.6)'
+              : '1px solid rgba(210, 210, 215, 0.6)',
+            borderRadius: '14px',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
             fontSize: '0.875rem',
           },
           success: {
             iconTheme: {
-              primary: '#22c55e',
-              secondary: isDark ? '#1e293b' : '#ffffff',
+              primary: isDark ? '#30d158' : '#03a10e',
+              secondary: isDark ? '#1d1d1f' : '#ffffff',
             },
           },
           error: {
             iconTheme: {
-              primary: '#ef4444',
-              secondary: isDark ? '#1e293b' : '#ffffff',
+              primary: isDark ? '#ff453a' : '#e30000',
+              secondary: isDark ? '#1d1d1f' : '#ffffff',
             },
           },
         }}

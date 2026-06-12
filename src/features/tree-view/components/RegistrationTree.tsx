@@ -55,7 +55,7 @@ export function RegistrationTree() {
     <div className="flex h-full flex-col">
       {/* Search + controls */}
       <div className="shrink-0 border-b border-surface-700/50 p-2 space-y-1.5">
-        <div className="flex items-center gap-1.5 rounded-md border border-surface-700/50 bg-surface-800 px-2.5 py-1.5">
+        <div className="flex items-center gap-1.5 rounded-full bg-surface-800 px-3 py-1.5">
           <Search className="h-3.5 w-3.5 text-surface-500" />
           <input
             type="text"
@@ -80,28 +80,28 @@ export function RegistrationTree() {
             onClick={() => toggleFilter('webhook')}
             icon={<Globe className="h-3 w-3" />}
             label="Webhooks"
-            color="text-blue-400"
+            color="text-accent"
           />
           <FilterToggle
             active={activeFilters.has('serviceEndpoint')}
             onClick={() => toggleFilter('serviceEndpoint')}
             icon={<Cloud className="h-3 w-3" />}
             label="Endpoints"
-            color="text-purple-400"
+            color="text-surface-400"
           />
         </div>
 
         <div className="flex items-center gap-1">
           <button
             onClick={expandAll}
-            className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] text-surface-500 hover:bg-surface-800 hover:text-surface-300"
+            className="flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] text-surface-500 hover:bg-surface-800 hover:text-surface-300"
           >
             <ChevronDown className="h-3 w-3" />
             Expand
           </button>
           <button
             onClick={collapseAll}
-            className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] text-surface-500 hover:bg-surface-800 hover:text-surface-300"
+            className="flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] text-surface-500 hover:bg-surface-800 hover:text-surface-300"
           >
             <ChevronRight className="h-3 w-3" />
             Collapse
@@ -158,7 +158,7 @@ function FilterToggle({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] transition-colors ${
+      className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] transition-colors ${
         active
           ? 'bg-surface-700 text-surface-100'
           : `text-surface-500 hover:bg-surface-800 hover:text-surface-300`

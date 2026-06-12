@@ -72,15 +72,15 @@ export function CommandBar() {
   const isRegistrations = activeView === 'registrations';
 
   return (
-    <div className="flex h-12 shrink-0 items-center gap-2 border-b border-surface-700/50 bg-surface-800/80 px-3 backdrop-blur-sm">
-      {/* Left section: View toggle tabs */}
-      <div className="flex items-center gap-0.5 rounded-md border border-surface-700/50 bg-surface-900/50 p-0.5">
+    <div className="frosted flex h-12 shrink-0 items-center gap-2 border-b border-surface-700/60 px-3">
+      {/* Left section: segmented view control */}
+      <div className="flex items-center rounded-full bg-surface-700/60 p-0.5">
         <button
           onClick={() => setActiveView('registrations')}
-          className={`flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+          className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
             isRegistrations
-              ? 'bg-surface-700 text-surface-100'
-              : 'text-surface-500 hover:text-surface-300'
+              ? 'bg-surface-900 text-surface-100 shadow-sm'
+              : 'text-surface-400 hover:text-surface-200'
           }`}
         >
           <Puzzle className="h-3.5 w-3.5" />
@@ -88,10 +88,10 @@ export function CommandBar() {
         </button>
         <button
           onClick={() => setActiveView('traceLogs')}
-          className={`flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+          className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
             !isRegistrations
-              ? 'bg-surface-700 text-surface-100'
-              : 'text-surface-500 hover:text-surface-300'
+              ? 'bg-surface-900 text-surface-100 shadow-sm'
+              : 'text-surface-400 hover:text-surface-200'
           }`}
         >
           <ScrollText className="h-3.5 w-3.5" />
@@ -108,15 +108,15 @@ export function CommandBar() {
           <div ref={registerMenuRef} className="relative">
             <button
               onClick={() => setShowRegisterMenu(!showRegisterMenu)}
-              className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium text-surface-200 transition-colors hover:bg-surface-700"
+              className="flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
               title="Register new..."
             >
               <Plus className="h-4 w-4" />
               Register
-              <ChevronDown className="h-3 w-3 text-surface-400" />
+              <ChevronDown className="h-3 w-3 text-white/70" />
             </button>
             {showRegisterMenu && (
-              <div className="absolute left-0 top-full z-50 mt-1 w-52 rounded-lg border border-surface-700 bg-surface-800 py-1 shadow-xl">
+              <div className="absolute left-0 top-full z-50 mt-1.5 w-52 rounded-2xl border border-surface-700/60 bg-elevated py-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.12)]">
                 <button
                   onClick={() => {
                     setShowRegisterMenu(false);
@@ -138,7 +138,7 @@ export function CommandBar() {
                   New Assembly
                 </button>
                 <div className="mx-2 my-1 border-t border-surface-700/50" />
-                <p className="px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-surface-500">
+                <p className="px-3 py-1 text-[11px] font-medium text-surface-500">
                   Endpoints
                 </p>
                 <button
@@ -148,7 +148,7 @@ export function CommandBar() {
                   }}
                   className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-surface-300 transition-colors hover:bg-surface-700"
                 >
-                  <Globe className="h-4 w-4 text-blue-400" />
+                  <Globe className="h-4 w-4 text-accent" />
                   New Webhook
                 </button>
                 <button
@@ -158,11 +158,11 @@ export function CommandBar() {
                   }}
                   className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-surface-300 transition-colors hover:bg-surface-700"
                 >
-                  <Cloud className="h-4 w-4 text-purple-400" />
+                  <Cloud className="h-4 w-4 text-surface-400" />
                   New Service Endpoint
                 </button>
                 <div className="mx-2 my-1 border-t border-surface-700/50" />
-                <p className="px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-surface-500">
+                <p className="px-3 py-1 text-[11px] font-medium text-surface-500">
                   Context actions
                 </p>
                 <button
@@ -183,7 +183,7 @@ export function CommandBar() {
           {/* Refresh */}
           <button
             onClick={handleRefresh}
-            className="rounded-md p-1.5 text-surface-400 transition-colors hover:bg-surface-700 hover:text-surface-200"
+            className="rounded-full p-1.5 text-surface-400 transition-colors hover:bg-surface-700 hover:text-surface-200"
             title="Refresh all data"
           >
             <RefreshCw
@@ -197,13 +197,13 @@ export function CommandBar() {
           <div ref={viewMenuRef} className="relative">
             <button
               onClick={() => setShowViewMenu(!showViewMenu)}
-              className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-surface-300 transition-colors hover:bg-surface-700"
+              className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-surface-300 transition-colors hover:bg-surface-700"
             >
               View: {VIEW_MODE_LABELS[treeViewMode]}
               <ChevronDown className="h-3 w-3" />
             </button>
             {showViewMenu && (
-              <div className="absolute left-0 top-full z-50 mt-1 w-40 rounded-lg border border-surface-700 bg-surface-800 py-1 shadow-xl">
+              <div className="absolute left-0 top-full z-50 mt-1.5 w-40 rounded-2xl border border-surface-700/60 bg-elevated py-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.12)]">
                 {(
                   Object.entries(VIEW_MODE_LABELS) as [TreeViewMode, string][]
                 ).map(([mode, label]) => (
@@ -232,7 +232,7 @@ export function CommandBar() {
       {!isRegistrations && (
         <button
           onClick={handleRefresh}
-          className="rounded-md p-1.5 text-surface-400 transition-colors hover:bg-surface-700 hover:text-surface-200"
+          className="rounded-full p-1.5 text-surface-400 transition-colors hover:bg-surface-700 hover:text-surface-200"
           title="Refresh trace logs"
         >
           <RefreshCw
@@ -243,7 +243,7 @@ export function CommandBar() {
 
       {/* Center: Functional search (registrations only) */}
       {isRegistrations && (
-        <div className="mx-4 flex max-w-sm flex-1 items-center gap-2 rounded-md border border-surface-700/50 bg-surface-900/50 px-3 py-1.5">
+        <div className="mx-4 flex max-w-sm flex-1 items-center gap-2 rounded-full bg-surface-700/60 px-3.5 py-1.5">
           <svg
             className="h-3.5 w-3.5 text-surface-500"
             fill="none"
@@ -295,7 +295,7 @@ export function CommandBar() {
         {/* Theme toggle */}
         <button
           onClick={toggleTheme}
-          className="rounded-md p-1.5 text-surface-400 transition-colors hover:bg-surface-700 hover:text-surface-200"
+          className="rounded-full p-1.5 text-surface-400 transition-colors hover:bg-surface-700 hover:text-surface-200"
           title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
         >
           {theme === 'dark' ? (
@@ -308,7 +308,7 @@ export function CommandBar() {
         {/* Session Details */}
         <button
           onClick={() => openDialog({ type: 'sessionDetails' })}
-          className="rounded-md p-1.5 text-surface-400 transition-colors hover:bg-surface-700 hover:text-surface-200"
+          className="rounded-full p-1.5 text-surface-400 transition-colors hover:bg-surface-700 hover:text-surface-200"
           title="Session details"
         >
           <Settings className="h-4 w-4" />
