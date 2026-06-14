@@ -85,6 +85,10 @@ The official Plugin Registration Tool is a Windows-only desktop app that require
 ### Edit Step Dialog
 ![Edit Step](docs/screenshots/edit-step.png?v=4)
 
+### Trace Logs & Monitoring Dashboard
+
+![Trace Logs & Monitoring Dashboard](docs/screenshots/monitoring-dashboard.png?v=1)
+
 ## Getting Started
 
 ### Option 1: Import Managed Solution (Recommended)

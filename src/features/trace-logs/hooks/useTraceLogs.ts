@@ -71,21 +71,29 @@ export function useTraceLogs(
         // Subsequent pages: use the @odata.nextLink URL from the previous page
         url = pageCursors[pageIndex - 1]!;
       } else {
-        // First page: build the OData query from scratch (no $skip)
+        // First page: build the OData query from scratch (no $skip).
+        // NOTE: do NOT use $top to set the page size — in the Dataverse Web API
+        // $top caps the *total* result set and suppresses @odata.nextLink, which
+        // breaks paging (Next stays on page 1). Page size is set via the
+        // `odata.maxpagesize` Prefer header below so the response carries a cursor.
         const filterStr = buildFilterString(filters);
         const parts = [
           `$select=${LIST_SELECT}`,
           `$orderby=${encodeURIComponent(`${sortField} ${sortDirection}`)}`,
-          `$top=${pageSize}`,
           `$count=true`,
         ];
         if (filterStr) parts.push(`$filter=${encodeURIComponent(filterStr)}`);
         url = `${endpoints.traceLogs.list}?${parts.join('&')}`;
       }
 
+      // Server-driven paging: `odata.maxpagesize` makes Dataverse return up to
+      // `pageSize` rows plus an @odata.nextLink for the following page. Sent on
+      // every request (first page and nextLink follows) to keep paging active.
       const result = await dataverseClient.get<
         ODataCollectionResponse<PluginTraceLog>
-      >(url);
+      >(url, {
+        Prefer: `odata.include-annotations="*",odata.maxpagesize=${pageSize}`,
+      });
 
       return {
         logs: result.value,
