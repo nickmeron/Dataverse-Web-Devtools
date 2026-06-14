@@ -66,25 +66,29 @@ export function TraceLogViewer() {
     setSort,
   } = useTraceLogStore();
 
-  const { data, isLoading, isFetching, isError, error } = useTraceLogs(
-    filters,
-    pageIndex,
-    pageSize,
-    pageCursors,
-    sortField,
-    sortDirection,
-  );
+  const { data, isLoading, isFetching, isError, error, isPlaceholderData } =
+    useTraceLogs(
+      filters,
+      pageIndex,
+      pageSize,
+      pageCursors,
+      sortField,
+      sortDirection,
+    );
   const {
     data: statsData,
     isLoading: statsLoading,
   } = useTraceLogStats(filters);
 
-  // Store the @odata.nextLink cursor when data loads
+  // Store the @odata.nextLink cursor when the *real* page data loads.
+  // Guard on !isPlaceholderData so we never record the previous page's
+  // nextLink against the new pageIndex while the next page is still fetching
+  // (keepPreviousData serves the old page during the transition).
   useEffect(() => {
-    if (data?.nextLink) {
+    if (data?.nextLink && !isPlaceholderData) {
       setPageCursor(pageIndex, data.nextLink);
     }
-  }, [data?.nextLink, pageIndex, setPageCursor]);
+  }, [data?.nextLink, isPlaceholderData, pageIndex, setPageCursor]);
 
   const logs = data?.logs ?? [];
   const totalCount = data?.totalCount ?? 0;
