@@ -74,16 +74,16 @@ The official Plugin Registration Tool is a Windows-only desktop app that require
 
 ## Screenshots
 
-![Main](docs/screenshots/main-image.png?v=3)
+![Main](docs/screenshots/main-image.png?v=4)
 
 ### Registrations Tree & Step Detail
-![Registrations Tree](docs/screenshots/registrations-tree.png?v=3)
+![Registrations Tree](docs/screenshots/registrations-tree.png?v=4)
 
 ### Update Assembly — replace the binary and edit properties
-![Update Assembly](docs/screenshots/update-assembly.png?v=3)
+![Update Assembly](docs/screenshots/update-assembly.png?v=4)
 
 ### Edit Step Dialog
-![Edit Step](docs/screenshots/edit-step.png?v=3)
+![Edit Step](docs/screenshots/edit-step.png?v=4)
 
 ## Getting Started
 
